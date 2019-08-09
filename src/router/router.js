@@ -9,6 +9,9 @@ import welcome from '../components/manage/welcome'
 import user from '../components/manage/user'
 import userMain from '../components/userMain'
 import adduUser from '../components/manage/AddUser'
+import deviceManage from '../components/DeviceManage/DeviceManage'
+import deviceAdd from '../components/DeviceManage/DeviceAdd'
+import orderManage from '../components/OrderManage/OrderManagement'
 
 Vue.use(Router)
 //创建路由对象,配置路由
@@ -33,7 +36,19 @@ const router = new Router({
 				{
 					path:"adduser",
 					component:adduUser
-				}
+				},
+				{
+					path:"addDevice",
+					component:deviceAdd
+				},
+                {
+                    path:"deviceManege",
+                    component:deviceManage
+                },
+                {
+                    path:"orderManege",
+                    component:orderManage
+                },
 			]
 		},
 		{
