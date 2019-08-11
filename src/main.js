@@ -10,7 +10,7 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false
 axios.defaults.baseURL = 'http://localhost:8081'
 //把axios添加到Vue实例属性上，供全局使用
-Vue.prototype.http=axios
+Vue.prototype.$ajax=axios
 //挂载到Vue实例上面
 Vue.prototype.MYGLOBAL=myGlobal
 
