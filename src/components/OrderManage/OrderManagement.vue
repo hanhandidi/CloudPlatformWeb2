@@ -16,14 +16,14 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" icon="el-icon-circle-plus"
-                    @click="dialogFormVisible = true">新建订单</el-button>
+                    @click="newOrder">新建订单</el-button>
                 </el-form-item>
             </el-form>
         </div>
 
 
 
-        <el-dialog title="新建订单" :visible.sync="dialogFormVisible">
+        <el-dialog :title="change===0?'新建订单':'更新订单'" :visible.sync="dialogFormVisible">
             <el-form :model="order">
                 <el-form-item label="订单来源" :label-width="formLabelWidth">
                     <el-input v-model="order.resource" autocomplete="off"></el-input>
@@ -227,18 +227,33 @@
                     count: '',
                     endDate: '',
                 },
-                formLabelWidth: '120px'
+                formLabelWidth: '120px',
+                change:0,
             }
         },
         methods: {
             handleEdit(index, row) {
                 console.log(index, row);
+                this.change=1;
+                this.dialogFormVisible = true;
+                this.order.resource=row.orderSource;
+                this.order.name=row.productName;
+                this.order.count=row.productCount;
+                this.order.endDate=row.endDate;
             },
             handleDelete(index, row) {
                 console.log(index, row);
             },
             onSubmit() {
                 console.log('submit!');
+            },
+            newOrder(){
+                this.change=0;
+                this.order.resource="";
+                this.order.name="";
+                this.order.count="";
+                this.order.endDate="";
+               this.dialogFormVisible = true;
             },
             orderCreate(){
                 this.dialogFormVisible = false;

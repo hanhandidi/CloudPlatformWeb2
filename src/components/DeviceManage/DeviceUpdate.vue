@@ -1,5 +1,5 @@
 <template>
-    <div >
+    <div>
         <div class="position">
             <el-form ref="device" :model="equipment" :rules="deviceRules"  label-width="80px">
                 <el-form-item label="设备序号" prop="seq">
@@ -34,13 +34,12 @@
                 </el-form-item>
             </el-form>
         </div>
-
     </div>
 </template>
 
 <script>
     export default {
-        name: "DeviceAdd",
+        name: "DeviceUpdate",
         data() {
             return {
                 equipment: {
@@ -52,10 +51,10 @@
                 },
                 deviceRules: {
                     seq: [{
-                            required: true,
-                            message: '请输入设备序号',
-                            trigger: 'blur'
-                        },
+                        required: true,
+                        message: '请输入设备序号',
+                        trigger: 'blur'
+                    },
                         {
                             min: 2,
                             max: 100,
@@ -72,6 +71,13 @@
                     ]
                 }
             };
+        },
+        created(){
+            let device=this.$route.params.device;
+            this.equipment.seq=device.seq;
+            this.equipment.name=device.name;
+            this.equipment.status=device.status;
+            this.equipment.flag=device.flag;
         },
         methods: {
             onSubmit(device) {
