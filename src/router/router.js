@@ -7,6 +7,7 @@ import Home from "../components/Home";
 import AccountManage from "../components/AccountManage/AccountManage";
 import Auth from "../components/AccountManage/Auth";
 import Login from "../components/AccountManage/Login";
+
 import RegisterFactory from "../components/AccountManage/RegisterFactory";
 import RegisterAdmin from "../components/AccountManage/RegisterAdmin";
 import RegisterFinish from "../components/AccountManage/RegisterFinish";
