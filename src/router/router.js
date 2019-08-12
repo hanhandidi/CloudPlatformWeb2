@@ -24,13 +24,14 @@ import CreateSchedule from "../components/ProScheduleManage/AddProSchedule"
 import ScheduleManage from "../components/ProScheduleManage/ProductSchedule"
 import AddProductTrace from "../components/ProduceTrace/AddProductTrace"
 import TraceList from "../components/ProduceTrace/TraceList"
+import Register from "../components/AccountManage/Register";
 Vue.use(Router);
 //创建路由对象,配置路由
 const router = new Router({
     routes: [
         {
             path: "/",
-            redirect: "/login"
+            redirect: "/register"
         },
         {
             path: "/",
@@ -46,7 +47,8 @@ const router = new Router({
                 },
                 {
                     path: "/register",
-                    component: AccountManage,
+                    component: Register,
+                    redirect: "/register/1",
                     children: [
                         {
                             path: "1",

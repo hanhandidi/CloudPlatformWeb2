@@ -16,8 +16,8 @@
 </template>
 
 <script>
-    import TopMenu from "./TopMenu";
-    import LeftMenu from "./LeftMenu";
+    import TopMenu from "./CloudIndex/TopMenu";
+    import LeftMenu from "./CloudIndex/LeftMenu";
 
     export default {
         name: "home",
