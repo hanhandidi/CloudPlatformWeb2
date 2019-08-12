@@ -3,6 +3,7 @@
         <!--menu-->
         <el-menu
                 :collapse="isCollapse"
+                @select="addTab"
                 active-text-color="#ffd04b"
                 background-color="#222222"
                 class="sidebar-el-menu"
@@ -11,23 +12,34 @@
                 text-color="#cccccc"
                 unique-opened
         >
-            <!--伪动态菜单-->
-            <el-submenu :index="item.index" :key="index" v-for="(item,index) in items">
-                <template slot="title">
-                    <i :class="item.icon"></i>
-                    <span>{{item.title}}</span>
-                </template>
-                <el-menu-item :index="i.index" :key="childIndex" v-for="(i,childIndex) in item.subs" v-if="index!==3">
-                    {{i.title}}
-                </el-menu-item>
-                <el-submenu :index="i.index" :key="childIndex" v-for="(i,childIndex) in item.subs"
-                            v-if="index===3">
-                    <template slot="title">
-                        <span>{{i.title}}</span>
+
+            <!--动态显示菜单-->
+            <!-- 一级菜单 -->
+            <template v-for="item in menu">
+                <el-submenu :index="item.index" :key="item.index" v-if="item.subs && item.subs.length">
+                    <template slot="title"><i :class="item.icon"></i><span>{{item.title}}</span></template>
+
+                    <!-- 二级菜单 -->
+                    <template v-for="itemChild in item.subs">
+                        <el-submenu :index="itemChild.index" :key="itemChild.index"
+                                    v-if="itemChild.subs && itemChild.subs.length">
+                            <template slot="title"><i :class="itemChild.icon"></i><span>{{itemChild.title}}</span>
+                            </template>
+
+                            <!-- 三级菜单 -->
+                            <el-menu-item :index="`/home/${itemChild_Child.index}`" :key="itemChild_Child.index"
+                                          v-for="itemChild_Child in itemChild.subs">
+                                <i :class="itemChild_Child.icon"></i><span slot="title">{{itemChild_Child.title}}</span>
+                            </el-menu-item>
+                        </el-submenu>
+                        <el-menu-item :index="`/home/${itemChild.index}`" :key="itemChild.index" v-else>
+                            <i :class="itemChild.icon"></i><span slot="title">{{itemChild.title}}</span>
+                        </el-menu-item>
                     </template>
-                    <el-menu-item :index="childItem.index" v-for="childItem in i.subs">{{childItem.title}}</el-menu-item>
                 </el-submenu>
-            </el-submenu>
+                <el-menu-item :index="item.index" :key="item.index" v-else><i :class="item.icon"></i><span slot="title">{{item.title}}</span>
+                </el-menu-item>
+            </template>
             <!--静态菜单-->
             <!--<el-submenu index="1">
                 <template slot="title">
@@ -77,6 +89,9 @@
 </template>
 
 <script>
+    import menu from './menu-config'
+    import bus from './bus'
+
     export default {
         name: "LeftMenu",
         props: {
@@ -84,98 +99,8 @@
         },
         data() {
             return {
-                items: [
-                    {
-                        title: '设备管理',
-                        index:'1',
-                        icon: 'el-icon-s-operation',
-                        subs: [
-                            {
-                                index: 'deviceManage',
-                                title: '设备列表'
-                            },
-                            {
-                                index: 'addDevice',
-                                title: '添加设备'
-                            },
-                        ]
-                    },
-                    {
-                        title: '产品管理',
-                        index:'2',
-                        icon: 'el-icon-s-goods',
-                        subs: [
-                            {
-                                index: 'productList',
-                                title: '产品列表'
-                            },
-                            {
-                                index: 'addProduct',
-                                title: '添加产品'
-                            },
-                        ]
-                    },
-                    {
-                        title: '订单管理',
-                        index:'3',
-                        icon: 'el-icon-s-order',
-                        subs: [
-                            {
-                                index: 'orderManage',
-                                title: '订单列表'
-                            },
-                        ]
-                    },
-                    {
-                        title: '生产管理',
-                        index:'4',
-                        icon: 'el-icon-s-cooperation',
-                        subs: [
-                            {
-                                title: '生产计划管理',
-                                index:'4-1',
-                                subs: [
-                                    {
-                                        index: 'addProductPlan',
-                                        title: '添加生产计划'
-                                    },
-                                    {
-                                        index: 'planList',
-                                        title: '生产计划列表'
-                                    },
-                                ]
-                            },
-                            {
-                                title: '生产调度管理',
-                                index:'4-2',
-                                subs: [
-                                    {
-                                        index: 'addProductSchedule',
-                                        title: '添加生产调度'
-                                    },
-                                    {
-                                        index: 'ScheduleList',
-                                        title: '生产调度列表'
-                                    },
-                                ]
-                            },
-                            {
-                                title: '生产跟踪管理',
-                                index:'4-3',
-                                subs: [
-                                    {
-                                        index: 'addProduceTrace',
-                                        title: '添加生产跟踪'
-                                    },
-                                    {
-                                        index: 'TraceList',
-                                        title: '生产跟踪列表'
-                                    },
-                                ]
-                            },
-                        ]
-                    },
-                ]
+                menu: menu,
+                openedTab: []
             }
         },
     }
