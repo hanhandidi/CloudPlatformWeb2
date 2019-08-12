@@ -12,7 +12,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" icon="el-icon-search" @click="onSubmit">搜索</el-button>
+                    <el-button type="primary" icon="el-icon-search" round @click="onSubmit">搜索</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -150,6 +150,12 @@
         methods: {
             handleEdit(index, row) {
                 console.log(index, row);
+                this.$router.push({
+                    name:"updateDevice",
+                    params:{
+                        device:row
+                    }
+                });
             },
             handleDelete(index, row) {
                 console.log(index, row);
