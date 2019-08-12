@@ -17,71 +17,78 @@
             </el-form>
         </div>
 
-        <el-table :data="equipments" style="width: 100%">
-            <el-table-column label="创建时间" width="180">
-                <template slot-scope="scope">
-                    <i class="el-icon-time"></i>
-                    <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="创建人" width="130">
-                <template slot-scope="scope">
-                    <el-popover trigger="hover" placement="top">
-                        <p>姓名: {{ scope.row.createUserName }}</p>
-                        <p>住址: {{ scope.row.name }}</p>
-                        <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium">{{ scope.row.createUserName }}</el-tag>
-                        </div>
-                    </el-popover>
-                </template>
-            </el-table-column>
-            <el-table-column label="设备序号" width="180">
+        <el-table stripe border :data="equipments" style="width: 100%">
+            <el-table-column align="center" label="设备序号" width="180">
                 <template slot-scope="scope">
                     <span>{{ scope.row.seq }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="设备名称" width="180">
+            <el-table-column align="center" label="设备名称" width="180">
                 <template slot-scope="scope">
                     <span >{{ scope.row.name }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="设备图片" width="180">
+            <el-table-column align="center" label="设备图片" width="180">
                 <template slot-scope="scope">
                     <span >{{ scope.row.imgUrl }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="设备状态" width="180">
+            <el-table-column align="center" label="可生产产品" width="180">
+                <template slot-scope="scope">
+                    <span v-for="(item,index) in scope.row.productName" :key='index'>
+                        {{ item }}&nbsp; </span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="设备状态" width="135">
                 <template slot-scope="scope">
                     <el-tag
                             :type="showType(scope.row.status)"
                             disable-transitions>{{showText(scope.row.status)}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="有效标识" width="180">
+            <el-table-column align="center" label="创建时间" width="180">
+                <template slot-scope="scope">
+                    <i class="el-icon-time"></i>
+                    <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="创建人" width="130">
+                <template slot-scope="scope">
+                    <el-popover trigger="hover" placement="top">
+                        <p>姓名: {{ scope.row.createUserName }}</p>
+                        <p>住址: {{ scope.row.name }}</p>
+                        <div slot="reference" class="name-wrapper">
+                            {{ scope.row.createUserName }}
+                        </div>
+                    </el-popover>
+                </template>
+            </el-table-column>
+
+            <el-table-column align="center" label="上次修改时间" width="180">
+                <template slot-scope="scope">
+                    <i class="el-icon-time"></i>
+                    <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="修改人" width="130">
+                <template slot-scope="scope">
+                    <el-popover trigger="hover" placement="top">
+                        <p>姓名: {{ scope.row.updateUserName }}</p>
+                        <p>住址: {{ scope.row.name }}</p>
+                        <div slot="reference" class="name-wrapper">
+                            {{ scope.row.updateUserName }}
+                        </div>
+                    </el-popover>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="有效标识" width="135">
                 <template slot-scope="scope">
                     <el-tag
                             :type="scope.row.flag === 0 ? 'success' : 'info'"
                             disable-transitions>{{scope.row.flag === 0 ? '有效' : '无效'}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="上次修改时间" width="180">
-                <template slot-scope="scope">
-                    <i class="el-icon-time"></i>
-                    <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="修改人" width="130">
-                <template slot-scope="scope">
-                    <el-popover trigger="hover" placement="top">
-                        <p>姓名: {{ scope.row.updateUserName }}</p>
-                        <p>住址: {{ scope.row.name }}</p>
-                        <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium">{{ scope.row.updateUserName }}</el-tag>
-                        </div>
-                    </el-popover>
-                </template>
-            </el-table-column>
-            <el-table-column label="操作" fixed="right" width="180">
+            <el-table-column align="center" label="操作" fixed="right" width="180">
                 <template slot-scope="scope">
                     <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
                         编辑
@@ -106,6 +113,10 @@
                     imgUrl: '暂无图片',
                     status: '10',
                     flag: 1,
+                    productName:[
+                      "403型号钢管",
+                      "无碳钢板",
+                    ],
                     createTime: '2016-05-02',
                     createUserName:'周全',
                     updateTime: '2016-05-02',
@@ -116,6 +127,10 @@
                     imgUrl: '暂无图片',
                     status: '20',
                     flag: 0,
+                    productName:[
+                        "403型号钢管",
+                        "无碳钢板",
+                    ],
                     createTime: '2016-05-02',
                     createUserName:'周全',
                     updateTime: '2016-05-02',
@@ -126,6 +141,10 @@
                     imgUrl: '暂无图片',
                     status: '10',
                     flag: 1,
+                    productName:[
+                        "403型号钢管",
+                        "无碳钢板",
+                    ],
                     createTime: '2016-05-02',
                     createUserName:'周全',
                     updateTime: '2016-05-02',
@@ -136,6 +155,10 @@
                     imgUrl: '暂无图片',
                     status: '30',
                     flag: 0,
+                    productName:[
+                        "403型号钢管",
+                        "无碳钢板",
+                    ],
                     createTime: '2016-05-02',
                     createUserName:'周全',
                     updateTime: '2016-05-02',

@@ -90,7 +90,6 @@
 
 <script>
     import menu from './menu-config'
-    import bus from './bus'
 
     export default {
         name: "LeftMenu",
