@@ -4,9 +4,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 //导入需要配置路由的组件
 import Home from "../components/CloudIndex/Home";
+
 import AccountManage from "../components/AccountManage/AccountManage";
 import Auth from "../components/AccountManage/Auth";
 import Login from "../components/AccountManage/Login";
+import Register from "../components/AccountManage/Register";
 
 import deviceManage from '../components/DeviceManage/DeviceManage'
 import deviceAdd from '../components/DeviceManage/DeviceAdd'
@@ -19,7 +21,7 @@ const router = new Router({
         {
             path: "",
             component: AccountManage,
-            redirect: "/login"
+            redirect: "/register"
 
         },
         {
@@ -33,6 +35,10 @@ const router = new Router({
                 {
                     path: "/auth",
                     component: Auth
+                },
+                {
+                    path: "/register",
+                    component: Register
                 }
             ]
         },

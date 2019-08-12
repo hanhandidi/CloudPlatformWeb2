@@ -1,7 +1,7 @@
 <template>
   <!-- 扫码登录 -->
   <div class="login_box">
-    <router-link to="/input">
+    <router-link to="/login">
       <div class="login_close"></div>
     </router-link>
     <div class="qrcode">
