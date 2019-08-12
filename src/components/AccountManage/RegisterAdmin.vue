@@ -117,24 +117,25 @@
 
 
     /* 输入框和按钮 */
-    .login_panel >>> input {
+    .panel_wrap >>> input {
         border: 1px solid #c3c3c3;
     }
 
-    .login_panel >>> input:hover {
+    .panel_wrap >>> input:hover {
         border: 1px solid #409EFF;
     }
 
-    .login_panel >>> .bt_next {
+    .panel_wrap >>> .bt_next {
         color: #ffffff;
         background: #379df6;
         cursor: pointer;
         float: right;
-        margin-top: 15px
+        margin-top: 50px;
+        margin-right: 25px;
 
     }
 
-    .login_panel >>> .bt_next:hover {
+    .panel_wrap >>> .bt_next:hover {
         background-color: #2f86f6;
     }
 </style>

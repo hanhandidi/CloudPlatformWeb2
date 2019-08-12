@@ -3,77 +3,38 @@ import Vue from 'vue'
 //导入vue-router,js库
 import Router from 'vue-router'
 //导入需要配置路由的组件
-<<<<<<< Updated upstream
-import Home from "../components/CloudIndex/Home";
-
+import Home from "../components/Home";
 import AccountManage from "../components/AccountManage/AccountManage";
 import Auth from "../components/AccountManage/Auth";
 import Login from "../components/AccountManage/Login";
-import Register from "../components/AccountManage/Register";
+import RegisterFactory from "../components/AccountManage/RegisterFactory";
+import RegisterAdmin from "../components/AccountManage/RegisterAdmin";
+import RegisterFinish from "../components/AccountManage/RegisterFinish";
 
-=======
-import adminMain from '../components/manage/adminMain'
-import adminLogin from '../components/manage/adminLogin'
-import welcome from '../components/manage/welcome'
-import user from '../components/manage/user'
-import adduUser from '../components/manage/AddUser'
->>>>>>> Stashed changes
-import deviceManage from '../components/DeviceManage/DeviceManage'
-import deviceAdd from '../components/DeviceManage/DeviceAdd'
-import orderManage from '../components/OrderManage/OrderManagement'
-import createPlan from '../components/ProPlanManage/AddProductPlan'
-import planManagement from "../components/ProPlanManage/PlanManagement"
-import createSchedule from "../components/ProScheduleManage/AddProSchedule"
-import scheduleManage from "../components/ProScheduleManage/ProductSchedule"
-import deviceUpdate from "../components/DeviceManage/DeviceUpdate"
-
+import DeviceAdd from '../components/DeviceManage/DeviceAdd'
+import DeviceManage from '../components/DeviceManage/DeviceManage'
+import DeviceUpdate from "../components/DeviceManage/DeviceUpdate"
+import AddProduct from "../components/ProductManage/AddProduct"
+import ProductList from "../components/ProductManage/ProductList"
+import OrderManage from '../components/OrderManage/OrderManagement'
+import CreatePlan from '../components/ProPlanManage/AddProductPlan'
+import PlanManagement from "../components/ProPlanManage/PlanManagement"
+import CreateSchedule from "../components/ProScheduleManage/AddProSchedule"
+import ScheduleManage from "../components/ProScheduleManage/ProductSchedule"
+import AddProductTrace from "../components/ProduceTrace/AddProductTrace"
+import TraceList from "../components/ProduceTrace/TraceList"
 Vue.use(Router);
 //创建路由对象,配置路由
 const router = new Router({
-<<<<<<< Updated upstream
     routes: [
         {
-            path: "",
-            component: AccountManage,
-            redirect: "/register"
-
+            path: "/",
+            redirect: "/login"
         },
         {
-            path: "",
+            path: "/",
             component: AccountManage,
             children: [
-=======
-	routes: [
-		{
-			path:'/',
-            redirect: '/admin'
-		},
-		{
-			path: '/admin',
-			component: adminMain,
-			children: [
-				{
-					path: "/",
-					component: welcome
-				},
-				{
-					path: "user",
-					component: user
-				},
-				{
-					path:"adduser",
-					component:adduUser
-				},
-				{
-                    path:"addDevice",
-                    component:deviceAdd
-                },
-                {
-                    path:"updateDevice",
-                    name:"updateDevice",
-                    component:deviceUpdate
-                },
->>>>>>> Stashed changes
                 {
                     path: "/login",
                     component: Login
@@ -84,61 +45,92 @@ const router = new Router({
                 },
                 {
                     path: "/register",
-                    component: Register
-                }
+                    component: AccountManage,
+                    children: [
+                        {
+                            path: "1",
+                            component: RegisterFactory
+                        },
+                        {
+                            path: "2",
+                            component: RegisterAdmin
+                        },
+                        {
+                            path: "3",
+                            component: RegisterFinish
+                        }
+                    ]
+                },
             ]
         },
         {
             path: "/home",
             component: Home,
             children: [
-
                 {
-                    path: "/addDevice",
-                    component: deviceAdd
-                },
-<<<<<<< Updated upstream
-                {
-                    path: "/auth",
-                    component: Auth
+                    //添加设备
+                    path: "addDevice",
+                    component: DeviceAdd
                 },
                 {
-                    path: "/deviceManage",
-                    component: deviceManage
+                    //设备列表
+                    path: "deviceManage",
+                    component: DeviceManage
                 },
                 {
-                    path: "/orderManage",
-                    component: orderManage
+                    //更新设备
+                    path: "deviceUpdate",
+                    component: DeviceUpdate
+                },
+                {
+                    //添加产品
+                    path:"addProduct",
+                    component:AddProduct
+                },
+                {
+                    //产品列表
+                    path:'productList',
+                    component:ProductList
+                },
+                {
+                    //订单管理
+                    path: "orderManage",
+                    component: OrderManage
+                },
+                {
+                    //添加生产计划
+                    path:"addProductPlan",
+                    component:CreatePlan
+                },
+                {
+                    //计划列表
+                    path:"planList",
+                    component:PlanManagement
+                },
+                {
+                    //添加生产调度
+                    path:"addProductSchedule",
+                    component:CreateSchedule
+                },
+                {
+                    //调度列表
+                    path:"scheduleList",
+                    component:ScheduleManage
+                },
+                {
+                    //添加跟踪
+                    path:"addProduceTrace",
+                    component:AddProductTrace
+                },
+                {
+                    //跟踪列表
+                    path:"traceList",
+                    component:TraceList
                 }
             ]
         }
     ]
 });
-=======
-				{
-					path:"newPlan",
-					component:createPlan
-				},
-				{
-					path:"planManage",
-					component:planManagement
-				},
-				{
-					path:"newSchedule",
-					component:createSchedule
-				},
-				{
-					path:"scheduleManage",
-					component:scheduleManage
-				}
-			]
-		},
-		{
-			path: '/adminLogin',
-			component: adminLogin
-		}
-	]
-})
->>>>>>> Stashed changes
+
 //导出路由对象
 export default router
