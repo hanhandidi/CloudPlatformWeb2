@@ -50,88 +50,87 @@
         </el-dialog>
 
 
-        <el-table :data="productOrder" style="width: 100%">
-            <el-table-column label="创建时间" width="180">
-                <template slot-scope="scope">
-                    <i class="el-icon-time"></i>
-                    <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="创建人" width="130">
-                <template slot-scope="scope">
-                    <el-popover trigger="hover" placement="top">
-                        <p>姓名: {{ scope.row.createUserName }}</p>
-                        <p>住址: {{ scope.row.name }}</p>
-                        <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium">{{ scope.row.createUserName }}</el-tag>
-                        </div>
-                    </el-popover>
-                </template>
-            </el-table-column>
-            <el-table-column label="订单编号" width="180">
+        <el-table border :data="productOrder" style="width: 100%">
+            <el-table-column align="center" label="订单编号" width="180">
                 <template slot-scope="scope">
                     <span>{{ scope.row.orderSeq }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="订单来源" width="180">
+            <el-table-column align="center" label="订单来源" width="180">
                 <template slot-scope="scope">
                     <span >{{ scope.row.orderSource }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="订单状态" width="180">
+            <el-table-column align="center" label="产品名称" width="180">
+                <template slot-scope="scope">
+                    <span >{{ scope.row.productName }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="产品数量" width="150">
+                <template slot-scope="scope">
+                    <span >{{ scope.row.productCount }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="订单截止日期" width="180">
+                <template slot-scope="scope">
+                    <i class="el-icon-time"></i>
+                    <span style="margin-left: 10px">{{ scope.row.endDate }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="订单状态" width="135">
                 <template slot-scope="scope">
                     <el-tag effect="dark"
                             :type="showStatus(scope.row.orderStatus)"
                             disable-transitions>{{showText(scope.row.orderStatus)}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="产品名称" width="180">
-                <template slot-scope="scope">
-                    <span >{{ scope.row.productName }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="产品数量" width="180">
-                <template slot-scope="scope">
-                    <span >{{ scope.row.productCount }}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column label="工厂产能" width="180">
+            <el-table-column align="center" label="工厂产能" width="180">
                 <template slot-scope="scope">
                     <span >{{ scope.row.factoryYield }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="订单截止日期" width="180">
+            <el-table-column align="center" label="创建时间" width="180">
                 <template slot-scope="scope">
                     <i class="el-icon-time"></i>
-                    <span style="margin-left: 10px">{{ scope.row.endDate }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="有效标识" width="180">
+            <el-table-column align="center" label="创建人" width="130">
+                <template slot-scope="scope">
+                    <el-popover trigger="hover" placement="top">
+                        <p>姓名: {{ scope.row.createUserName }}</p>
+                        <p>住址: {{ scope.row.name }}</p>
+                        <div slot="reference" class="name-wrapper">
+                            {{ scope.row.createUserName }}
+                        </div>
+                    </el-popover>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="有效标识" width="135">
                 <template slot-scope="scope">
                     <el-tag effect="dark"
                             :type="scope.row.flag === 0 ? 'success' : 'info'"
                             disable-transitions>{{scope.row.flag === 0 ? '有效' : '无效'}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="上次修改时间" width="180">
+            <el-table-column align="center" label="上次修改时间" width="180">
                 <template slot-scope="scope">
                     <i class="el-icon-time"></i>
                     <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="修改人" width="130">
+            <el-table-column align="center" label="修改人" width="130">
                 <template slot-scope="scope">
                     <el-popover trigger="hover" placement="top">
                         <p>姓名: {{ scope.row.updateUserName }}</p>
                         <p>住址: {{ scope.row.name }}</p>
                         <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium">{{ scope.row.updateUserName }}</el-tag>
+                            {{ scope.row.updateUserName }}
                         </div>
                     </el-popover>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" fixed="right" width="180">
+            <el-table-column align="center" label="操作" fixed="right" width="180">
                 <template slot-scope="scope">
                     <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
                         编辑
@@ -151,7 +150,7 @@
         data() {
             return {
                 productOrder: [{
-                    orderSeq: 'o20190803164530',
+                    orderSeq: 'O20190803164530',
                     orderSource: '线下订单',
                     productName: '罐装豆豉鱼',
                     productCount: 589,
@@ -164,7 +163,7 @@
                     updateTime: '2016-05-02',
                     updateUserName:'连文凯',
                 }, {
-                    orderSeq: 'o20190803164530',
+                    orderSeq: 'O20190803164530',
                     orderSource: '线上订单',
                     productName: '瓶装可口可乐',
                     productCount: 5589,
@@ -177,7 +176,7 @@
                     updateTime: '2016-05-02',
                     updateUserName:'习近平',
                 }, {
-                    orderSeq: 'o20190803164530',
+                    orderSeq: 'O20190803164530',
                     orderSource: '线下订单',
                     productName: 'BV_6A型号锂电池',
                     productCount: 9589,
@@ -190,7 +189,7 @@
                     updateTime: '2016-05-02',
                     updateUserName:'连文凯',
                 }, {
-                    orderSeq: 'o20190803164530',
+                    orderSeq: 'O20190803164530',
                     orderSource: '线下订单',
                     productName: '罐装豆豉鱼',
                     productCount: 589,
@@ -203,7 +202,7 @@
                     updateTime: '2016-05-02',
                     updateUserName:'连文凯',
                 },{
-                    orderSeq: 'o20190803164530',
+                    orderSeq: 'O20190803164530',
                     orderSource: '线下订单',
                     productName: '罐装豆豉鱼',
                     productCount: 589,

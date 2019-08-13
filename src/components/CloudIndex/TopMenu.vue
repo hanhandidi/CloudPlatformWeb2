@@ -81,6 +81,7 @@
 
 <style scoped>
     .topBar {
+        background-color: #333333;
         position: relative;
         box-sizing: border-box;
         width: 100%;
@@ -99,7 +100,7 @@
 
     .topBar .shrinkBut {
         float: left;
-        padding-left: 3px;
+        padding-left: 23px;
         padding-right: 20px;
         cursor: pointer;
         line-height: 60px;
@@ -138,6 +139,7 @@
 
     .exit {
         margin-left: 10px;
+        margin-right: 20px;
         cursor: pointer;
     }
 
