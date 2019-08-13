@@ -28,31 +28,29 @@
             return {
                 userId: '',
                 userPassword: '',
-                userInfoApi: 'http://api.trunch.cn/login' // 通过用户ID登录接口
+                userLoginApi: 'http://localhost/user/login' // 通过用户ID登录接口
             }
         },
         methods: {
             login() {
                 this.$ajax({
                     method: 'post',
-                    url: this.userInfoApi,
-                    data: this.qs.stringify({
-                        userId: this.userId,
-                        userPassword: this.userPassword
-                    })
+                    url: this.userLoginApi,
+                    data: 'userId=' + this.userId + '&userPassword=' + this.userPassword
                 }).then((response) => {
+                    console.log(response.data);
                     // 获取用户信息，登录成功
-                    if (response.data.data.userId !== 0) {
-                        this.$message({
-                            message: '登录成功！',
-                            type: 'success'
-                        })
+                    if (response.data.code === 200) {
+                        this.$message.success('登录成功!');
+                        // this.$router.push({
+                        //     path: `/register/3`
+                        // })
                     } else {
-                        this.$message.error('登录失败，请检查账号或密码!')
+                        this.$message.error('登录失败，请检查账号或密码!');
                     }
                     console.log(response.data.data)
                 }).catch((error) => {
-                    this.$message.error('登录失败，请检查账号或密码!')
+                    this.$message.error('登录失败，请检查账号或密码!');
                     console.log(error)
                 })
             }
