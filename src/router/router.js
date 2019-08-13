@@ -25,6 +25,7 @@ import ScheduleManage from "../components/ProScheduleManage/ProductSchedule"
 import TraceList from "../components/ProduceTrace/TraceList"
 import ReportList from "../components/ProduceTrace/ReportList"
 import Register from "../components/AccountManage/Register";
+import OrderDetail from "../components/OrderManage/OrderDetail"
 Vue.use(Router);
 //创建路由对象,配置路由
 const router = new Router({
@@ -98,8 +99,15 @@ const router = new Router({
                 {
                     //订单管理
                     path: "orderManage",
-                    component: OrderManage
+                    component: OrderManage,
                 },
+                {
+                    //订单详情
+                    path: "orderDetail",
+                    name:"orderDetail",
+                    component: OrderDetail
+                },
+
                 {
                     //添加生产计划
                     path:"addProductPlan",

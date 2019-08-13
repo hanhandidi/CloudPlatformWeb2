@@ -16,14 +16,14 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" icon="el-icon-circle-plus"
-                    @click="newOrder">新建订单</el-button>
+                    @click="dialogFormVisible = true">新建订单</el-button>
                 </el-form-item>
             </el-form>
         </div>
 
 
 
-        <el-dialog :title="change===0?'新建订单':'更新订单'" :visible.sync="dialogFormVisible">
+        <el-dialog title="新建订单" :visible.sync="dialogFormVisible">
             <el-form :model="order">
                 <el-form-item label="订单来源" :label-width="formLabelWidth">
                     <el-input v-model="order.resource" autocomplete="off"></el-input>
@@ -50,7 +50,7 @@
         </el-dialog>
 
 
-        <el-table border :data="productOrder" style="width: 100%">
+        <el-table  border :data="productOrder" style="width: 100%;">
             <el-table-column align="center" label="订单编号" width="180">
                 <template slot-scope="scope">
                     <span>{{ scope.row.orderSeq }}</span>
@@ -69,6 +69,11 @@
             <el-table-column align="center" label="产品数量" width="150">
                 <template slot-scope="scope">
                     <span >{{ scope.row.productCount }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="已完成数量" width="150">
+                <template slot-scope="scope">
+                    <span >{{ scope.row.finishedCount }}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="订单截止日期" width="180">
@@ -106,13 +111,6 @@
                     </el-popover>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="有效标识" width="135">
-                <template slot-scope="scope">
-                    <el-tag effect="dark"
-                            :type="scope.row.flag === 0 ? 'success' : 'info'"
-                            disable-transitions>{{scope.row.flag === 0 ? '有效' : '无效'}}</el-tag>
-                </template>
-            </el-table-column>
             <el-table-column align="center" label="上次修改时间" width="180">
                 <template slot-scope="scope">
                     <i class="el-icon-time"></i>
@@ -130,13 +128,32 @@
                     </el-popover>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="操作" fixed="right" width="180">
+            <el-table-column align="center" label="有效标识" width="135">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
-                        编辑
+                    <el-tag effect="dark"
+                            :type="scope.row.flag === 0 ? 'success' : 'info'"
+                            disable-transitions>{{scope.row.flag === 0 ? '有效' : '无效'}}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="操作" fixed="right" width="240">
+                <template slot-scope="scope">
+                    <el-button size="mini" v-if="scope.row.orderStatus===10">
+                        接单
                     </el-button>
-                    <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-                        删除
+                    <el-button size="mini" v-if="scope.row.orderStatus===10">
+                        拒单
+                    </el-button>
+                    <el-button size="mini" v-if="scope.row.orderStatus===20">
+                        转为生产计划
+                    </el-button>
+                    <el-button size="mini" v-if="scope.row.orderStatus===40">
+                        完成订单
+                    </el-button>
+                <!--    <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
+                        编辑
+                    </el-button>-->
+                    <el-button size="mini" round @click="handleEdit(scope.$index, scope.row)">
+                        查看详情
                     </el-button>
                 </template>
             </el-table-column>
@@ -154,6 +171,7 @@
                     orderSource: '线下订单',
                     productName: '罐装豆豉鱼',
                     productCount: 589,
+                    finishedCount:234,
                     endDate:'2016-05-02',
                     orderStatus: 10,
                     factoryYield:'280罐/天',
@@ -167,6 +185,7 @@
                     orderSource: '线上订单',
                     productName: '瓶装可口可乐',
                     productCount: 5589,
+                    finishedCount:234,
                     endDate:'2016-05-02',
                     orderStatus: 20,
                     factoryYield:'536瓶/天',
@@ -180,6 +199,7 @@
                     orderSource: '线下订单',
                     productName: 'BV_6A型号锂电池',
                     productCount: 9589,
+                    finishedCount:234,
                     endDate:'2016-05-02',
                     orderStatus: 30,
                     factoryYield:'459块/天',
@@ -193,6 +213,7 @@
                     orderSource: '线下订单',
                     productName: '罐装豆豉鱼',
                     productCount: 589,
+                    finishedCount:234,
                     endDate:'2016-05-02',
                     orderStatus: 40,
                     factoryYield:'280罐/天',
@@ -206,6 +227,7 @@
                     orderSource: '线下订单',
                     productName: '罐装豆豉鱼',
                     productCount: 589,
+                    finishedCount:234,
                     endDate:'2016-05-02',
                     orderStatus: 50,
                     factoryYield:'280罐/天',
@@ -227,32 +249,23 @@
                     endDate: '',
                 },
                 formLabelWidth: '120px',
-                change:0,
             }
         },
         methods: {
             handleEdit(index, row) {
                 console.log(index, row);
-                this.change=1;
-                this.dialogFormVisible = true;
-                this.order.resource=row.orderSource;
-                this.order.name=row.productName;
-                this.order.count=row.productCount;
-                this.order.endDate=row.endDate;
+                this.$router.push({
+                    name:"orderDetail",
+                    params:{
+                        order:row
+                    }
+                });
             },
             handleDelete(index, row) {
                 console.log(index, row);
             },
             onSubmit() {
                 console.log('submit!');
-            },
-            newOrder(){
-                this.change=0;
-                this.order.resource="";
-                this.order.name="";
-                this.order.count="";
-                this.order.endDate="";
-               this.dialogFormVisible = true;
             },
             orderCreate(){
                 this.dialogFormVisible = false;
