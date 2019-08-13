@@ -22,8 +22,8 @@ import CreatePlan from '../components/ProPlanManage/AddProductPlan'
 import PlanManagement from "../components/ProPlanManage/PlanManagement"
 import CreateSchedule from "../components/ProScheduleManage/AddProSchedule"
 import ScheduleManage from "../components/ProScheduleManage/ProductSchedule"
-import AddProductTrace from "../components/ProduceTrace/AddProductTrace"
 import TraceList from "../components/ProduceTrace/TraceList"
+import ReportList from "../components/ProduceTrace/ReportList"
 import Register from "../components/AccountManage/Register";
 Vue.use(Router);
 //创建路由对象,配置路由
@@ -121,9 +121,9 @@ const router = new Router({
                     component:ScheduleManage
                 },
                 {
-                    //添加跟踪
-                    path:"addProduceTrace",
-                    component:AddProductTrace
+                    //报工
+                    path:"reportList",
+                    component:ReportList
                 },
                 {
                     //跟踪列表

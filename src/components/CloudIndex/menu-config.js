@@ -77,13 +77,13 @@ module.exports = [{
                 index: '4-3',
                 subs: [
                     {
-                        index: 'addProduceTrace',
-                        title: '添加生产跟踪'
+                        index: 'reportList',
+                        title: '报工列表'
                     },
                     {
                         index: 'traceList',
                         title: '生产跟踪列表'
-                    },
+                    }
                 ]
             },
         ]
