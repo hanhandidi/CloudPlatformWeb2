@@ -2,16 +2,15 @@
     <div class="sidebar">
         <!--menu-->
         <el-menu
-                :collapse="isCollapse"
+                :collapse="$store.state.isCollapse"
                 active-text-color="#ffd04b"
                 background-color="#222222"
                 class="sidebar-el-menu"
-                default-active="0"
+                :default-active="$route.path"
                 router
                 text-color="#cccccc"
                 unique-opened
         >
-
             <!--动态显示菜单-->
             <!-- 一级菜单 -->
             <template v-for="item in menu">
@@ -27,11 +26,11 @@
 
                             <!-- 三级菜单 -->
                             <el-menu-item :index="`/home/${itemChild_Child.index}`" :key="itemChild_Child.index"
-                                          v-for="itemChild_Child in itemChild.subs">
+                                          v-for="itemChild_Child in itemChild.subs"  @click="openTab">
                                 <i :class="itemChild_Child.icon"></i><span slot="title">{{itemChild_Child.title}}</span>
                             </el-menu-item>
                         </el-submenu>
-                        <el-menu-item :index="`/home/${itemChild.index}`" :key="itemChild.index" v-else>
+                        <el-menu-item :index="`/home/${itemChild.index}`" :key="itemChild.index" v-else @click="openTab">
                             <i :class="itemChild.icon"></i><span slot="title">{{itemChild.title}}</span>
                         </el-menu-item>
                     </template>
@@ -39,74 +38,51 @@
                 <el-menu-item :index="item.index" :key="item.index" v-else><i :class="item.icon"></i><span slot="title">{{item.title}}</span>
                 </el-menu-item>
             </template>
-            <!--静态菜单-->
-            <!--<el-submenu index="1">
-                <template slot="title">
-                    <i class="el-icon-s-operation"></i>
-                    <span>设备管理</span>
-                </template>
-                <el-menu-item index="1-1">添加设备</el-menu-item>
-                <el-menu-item index="1-2">设备列表</el-menu-item>
-            </el-submenu>
-
-            <el-submenu index="2">
-                <template slot="title">
-                    <i class="el-icon-s-goods"></i>
-                    <span>产品管理</span>
-                </template>
-                <el-menu-item index="2-1">添加产品</el-menu-item>
-                <el-menu-item index="2-2">产品列表</el-menu-item>
-            </el-submenu>
-
-            <el-submenu index="3">
-                <template slot="title">
-                    <i class="el-icon-s-order"></i>
-                    <span slot="title">订单管理</span>
-                </template>
-                <el-menu-item index="3-1">添加订单</el-menu-item>
-                <el-menu-item index="3-2">订单列表</el-menu-item>
-            </el-submenu>
-
-            <el-submenu index="4">
-                <template slot="title">
-                    <i class="el-icon-s-cooperation"></i>
-                    <span>生产管理</span>
-                </template>
-                <el-submenu index="4-1">
-                    <template slot="title">生产计划管理</template>
-                    <el-menu-item index="3-1-1">添加生产计划</el-menu-item>
-                    <el-menu-item index="3-1-2">生产计划列表</el-menu-item>
-                </el-submenu>
-                <el-submenu index="3-2">
-                    <template slot="title">生产调度管理</template>
-                    <el-menu-item index="3-1-1">添加生产调度</el-menu-item>
-                    <el-menu-item index="3-1-2">生产调度列表</el-menu-item>
-                </el-submenu>
-            </el-submenu>-->
         </el-menu>
     </div>
 </template>
 
 <script>
     import menu from './menu-config'
+
     export default {
         name: "LeftMenu",
-        props: {
-            isCollapse: Boolean
-        },
         data() {
             return {
                 menu: menu,
-                openedTab: []
             }
         },
+        mounted() {
+            // 刷新时以当前路由做为tab加入tabs
+            // 当前路由不是首页时，添加首页以及另一页到store里，并设置激活状态
+            // 当当前路由是首页时，添加首页到store，并设置激活状态
+            /*if (this.$route.path !== '/home' && this.$route.path !== '/home/index') {
+                //console.log('1',this.$route.path);
+                this.$store.commit('add_tabs', {route: '/home/index' , name: '首页'});
+                this.$store.commit('add_tabs', {route: this.$route.path , name: this.$route.name });
+                this.$store.commit('set_active_index', this.$route.path);
+            } else {
+                //console.log('2',this.$route.path);
+                this.$store.commit('add_tabs', {route: '/home/index', name: '首页'});
+                this.$store.commit('set_active_index', '/home/index');
+                this.$router.replace('/home/index');
+            }*/
+            //this.$store.commit('add_tabs', {route: '/home/index', name: '首页'});
+        },
+        methods:{
+            openTab(){
+                this.$store.commit('add_tabs', {route: this.$route.path, name: this.$route.name});
+                this.$store.commit('set_active_index', this.$route.path);
+            }
+        }
     }
 </script>
 
 <style scoped>
     .sidebar {
         display: block;
-        position: absolute;
+        position: fixed;
+        z-index: 20;
         left: 0;
         top: 60px;
         bottom: 0;
@@ -123,15 +99,5 @@
 
     .sidebar > ul {
         height: 100%;
-    }
-
-    .el-submenu__title:hover {
-        /*background-color: rgb(255,153,102) !important;*/
-        color: rgb(255, 255, 255) !important;
-    }
-
-    .el-menu-item:hover {
-        /*background-color: rgb(255,153,102) !important;*/
-        color: rgb(255, 255, 255) !important;
     }
 </style>

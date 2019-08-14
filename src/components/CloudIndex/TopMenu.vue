@@ -1,6 +1,6 @@
 <template>
     <div class="topBar">
-        <div @click="Collapse" class="shrinkBut">
+        <div @click="changeCollapse" class="shrinkBut">
             <el-tooltip class="item" content="收缩菜单" effect="light" placement="bottom-end">
                 <i class="el-icon-menu"></i>
             </el-tooltip>
@@ -28,7 +28,7 @@
             <!--退出系统-->
             <div class="exit">
                 <el-tooltip class="item" content="退出系统" effect="light" placement="bottom-end">
-                    <i class="el-icon-switch-button"></i>
+                    <i class="el-icon-switch-button" @click="exit"></i>
                 </el-tooltip>
             </div>
         </div>
@@ -38,9 +38,6 @@
 <script>
     export default {
         name: "TopMenu",
-        props: {
-            Collapse: Function
-        },
         data() {
             return {
                 fullscreen: false,
@@ -73,17 +70,30 @@
                     }
                 }
                 this.fullscreen = !this.fullscreen;
+            },
+            changeCollapse() {
+                this.$store.dispatch('changeCollapse')
+            },
+            //退出系统
+            exit() {
+                this.$confirm('您将退出系统, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$router.push('/');
+                }).catch(() => {});
             }
         }
-
     }
 </script>
 
 <style scoped>
     .topBar {
         background-color: #333333;
-        position: relative;
+        position: fixed;
         box-sizing: border-box;
+        z-index: 1;
         width: 100%;
         height: 60px;
         font-size: 22px;
@@ -100,7 +110,7 @@
 
     .topBar .shrinkBut {
         float: left;
-        padding-left: 23px;
+        padding-left: 21px;
         padding-right: 20px;
         cursor: pointer;
         line-height: 60px;
@@ -139,7 +149,7 @@
 
     .exit {
         margin-left: 10px;
-        margin-right: 20px;
+        margin-right: 8px;
         cursor: pointer;
     }
 

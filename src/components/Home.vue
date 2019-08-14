@@ -1,15 +1,20 @@
 <template>
     <el-container>
         <el-header>
-            <TopMenu :Collapse="Collapse"/>
+            <TopMenu/>
         </el-header>
-        <el-container>
-            <el-aside :width="isCollapse ? '65px' : '250px'">
-                <LeftMenu :isCollapse="isCollapse"/>
+        <el-container style="height:662px" >
+            <el-aside :width="$store.state.isCollapse ? '65px' : '250px'">
+                <LeftMenu/>
             </el-aside>
             <el-main>
-                <!--        <Tags></Tags>-->
-                <router-view></router-view>
+                <Tabs></Tabs>
+                <!--缓存路由组件-->
+                <div class="con">
+                <keep-alive>
+                    <router-view></router-view>
+                </keep-alive>
+                </div>
             </el-main>
         </el-container>
     </el-container>
@@ -18,31 +23,23 @@
 <script>
     import TopMenu from "./CloudIndex/TopMenu";
     import LeftMenu from "./CloudIndex/LeftMenu";
+    import Tabs from "./CloudIndex/Tabs";
 
     export default {
         name: "home",
-        components: {TopMenu, LeftMenu},
+        components: {TopMenu, LeftMenu, Tabs},
         data() {
-            return {
-                isCollapse: false,  //是否收起侧边栏
-            }
+            return {}
         },
-        computed: {},
-        methods: {
-            Collapse() {
-                let isCollapse = this.isCollapse
-
-                this.isCollapse = !isCollapse
-            }
-        }
     }
 </script>
 
-<style>
-    .el-main,.el-header{
-        padding: 0px!important;
+<style scoped>
+    .el-main, .el-header {
+        padding: 0px !important;
     }
-     .avatar-uploader .el-upload {
+
+    .avatar-uploader .el-upload {
         border: 1px dashed #d9d9d9;
         border-radius: 6px;
         cursor: pointer;
