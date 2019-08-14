@@ -3,7 +3,6 @@
         <!--menu-->
         <el-menu
                 :collapse="isCollapse"
-                @select="addTab"
                 active-text-color="#ffd04b"
                 background-color="#222222"
                 class="sidebar-el-menu"

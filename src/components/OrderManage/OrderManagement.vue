@@ -253,7 +253,6 @@
         },
         methods: {
             handleEdit(index, row) {
-                console.log(index, row);
                 this.$router.push({
                     name:"orderDetail",
                     params:{
