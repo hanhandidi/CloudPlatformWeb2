@@ -4,7 +4,7 @@ TODO:报工：可对已启动的工单进行报工操作。报工操作需要录
 TODO:完成报工：在当前工单生产完成时可完成最后一次报工，勾选完成报工，可将当前工单置成已完成状态。
 -->
 <template>
-    <div>
+    <div style="margin: 20px;">
         <div class="position">
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="关键字">

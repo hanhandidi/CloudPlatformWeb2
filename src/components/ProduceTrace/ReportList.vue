@@ -4,8 +4,8 @@ TODO:然后根据调度号获取设备编号、设备序号、工厂编号
 TODO:能编辑的字段只有加工数量和报工状态
 -->
 <template>
-    <div>
-        <el-button type="info">工单信息</el-button>
+    <div style="margin: 20px;">
+        <el-button type="info" style="margin: 10px;">工单信息</el-button>
         <ul>
             <li>
                 <div class="infoDiv"><el-tag >工单编号</el-tag><el-tag type="info">{{scheItem.scheduleSeq}}</el-tag></div>
@@ -21,7 +21,7 @@ TODO:能编辑的字段只有加工数量和报工状态
             </li>
         </ul>
 
-        <div style="width: 100px">
+        <div style="width: 100px; margin: 10px;">
             <el-button type="info">报工列表</el-button>
         </div>
         <el-table :data="report" style="width: 100%">
@@ -156,6 +156,7 @@ TODO:能编辑的字段只有加工数量和报工状态
     li{
         list-style-type: none;
         margin: 10px;
+        margin-bottom: 20px;
         float: left;
     }
 </style>

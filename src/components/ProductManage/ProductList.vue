@@ -20,19 +20,19 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
 <template>
     <div>
         <!--按照商品名称查询商品-->
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form :inline="true" :model="queryInfo" style="margin: 15px;" class="demo-form-inline">
         <el-form-item label="商品名">
-            <el-input v-model="formInline.user" placeholder="商品名"></el-input>
+            <el-input v-model="queryInfo.proName" placeholder="商品名"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button type="primary" @click="onQuery()">查询</el-button>
         </el-form-item>
         </el-form>
         <!--商品列表，显示关键信息，点击展开详细信息-->
         <el-table
                 :data="tableData"
-                style="width: 100%">
-            <el-table-column type="expand">
+                style="width: 100%" height="500">
+            <el-table-column type="expand" >
                 <template slot-scope="props">
                     <el-form label-position="left" inline class="demo-table-expand" style="color: #99a9bf;">
                         <el-form-item label="商品编号" style="width: 50%; ">
@@ -110,12 +110,12 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
         </el-table>
         <!--修改产品信息的对话框-->
         <el-dialog title="修改产品" :visible.sync="dialogFormVisible" >
-            <el-form  label-width="80px">
+            <el-form  label-width="80px" :rules="rules" ref="proItem" :model="proItem">
                 <el-form-item label="商品编号" style="width: 50%; " >
                     <!--<span>{{ proItem.id }}</span>-->
                     <el-input v-model= "proItem.id"  disabled id="proID"></el-input>
                 </el-form-item>
-                <el-form-item label="商品名称" style="width: 50%; " >
+                <el-form-item label="商品名称" style="width: 50%; " prop="productName">
                     <el-input v-model= "proItem.productName" clearable id="proName"></el-input>
                 </el-form-item>
                 <el-form-item label="商品数量" style="width: 50%; " >
@@ -129,9 +129,9 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
                     </el-input-number>
                 </el-form-item>
                 <el-form-item label="商品状态" style="width: 50%; ">
-                    <el-radio-group v-model="radio1">
-                        <el-radio v-model="radio1" label="1">有效</el-radio>
-                        <el-radio v-model="radio1" label="0">无效</el-radio>
+                    <el-radio-group v-model="proItem.flag">
+                        <el-radio :label="1">有效</el-radio>
+                        <el-radio :label="0">无效</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="所属工厂" style="width: 50%; ">
@@ -181,7 +181,7 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false;1==1">取 消</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+                <el-button type="primary" @click="onUpdate('proItem')">确 定</el-button>
             </div>
         </el-dialog>
 
@@ -195,11 +195,16 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
         data() {
 
             return {
+                rules: {
+                    productName: [
+                        { required: true, message: '请输入产品名称', trigger: 'blur' },
+                        { min: 1,  message: '至少一个字符', trigger: 'blur' }
+                    ]
+                },
                 imageUrl: '../../assets/logo.png',
                 factories:['动画梦工场','成都体育场','天安门广场'],
                 dialogFormVisible: false,
-                proItem:{},
-                radio1: '',
+                proItem:{},//传到更新页面的信息，更新时提交给后台的信息
                 tableData: [
                     {
                     id: 0,
@@ -237,9 +242,8 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
                     updateTime:'产品更新时间-非必添',
                     updateUserName:'产品更新者名称-关联表'
                 }],
-                formInline: {
-                    user: '',
-                    region: ''
+                queryInfo: {
+                    proName: '',
                 }
             }
         },
@@ -250,8 +254,15 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
             handleDelete(index, row) {
                 console.log(index, row);
             },
-            onSubmit() {
-                console.log('submit!');
+            onQuery() {
+                if(""===this.queryInfo.proName)
+                {
+                    console.log('query!Empty'+this.queryInfo.proName);
+                }
+                else
+                {
+                    console.log('query!'+this.queryInfo.proName);
+                }
             },
             showDialog(pro){
                 console.log(pro);
@@ -284,6 +295,18 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
                     this.$message.error('上传头像图片大小不能超过 2MB!');
                 }
                 return isJPG && isLt2M;
+            },
+            onUpdate(formName){
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        alert('submit!');
+                        console.log(this.proItem)
+                        this.dialogFormVisible = false
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
             }
 
         }
