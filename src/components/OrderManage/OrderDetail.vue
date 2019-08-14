@@ -1,24 +1,169 @@
 <template>
     <div>
-        <el-collapse v-model="activeNames" @change="handleChange">
-            <el-collapse-item title="一致性 Consistency" name="1">
-                <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-                <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-            </el-collapse-item>
-            <el-collapse-item title="反馈 Feedback" name="2">
-                <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-                <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
-            </el-collapse-item>
-            <el-collapse-item title="效率 Efficiency" name="3">
-                <div>简化流程：设计简洁直观的操作流程；</div>
-                <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-                <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
-            </el-collapse-item>
-            <el-collapse-item title="可控 Controllability" name="4">
-                <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
-                <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
-            </el-collapse-item>
-        </el-collapse>
+        <div class="position">
+            <el-collapse v-model="activeNames" @change="handleChange">
+                <el-collapse-item name="1">
+                    <template slot="title">
+                        <span class="zhouFont">订单基本信息</span>
+                    </template>
+                    <table class="zhouTable">
+                        <tr>
+                            <td>订单编号：{{order.orderSeq}}</td>
+                            <td>订单来源：{{order.orderSource}}</td>
+                            <td>产品名称：{{order.productName}}</td>
+                            <td>订单状态：{{order.orderStatus}}</td>
+                        </tr>
+                        <tr>
+                            <td>产品数量：{{order.productCount}}</td>
+                            <td>订单截止日期：{{order.endDate}}</td>
+                            <td>创建时间：{{order.createTime}}</td>
+                            <td>创建人：{{order.createUserName}}</td>
+                        </tr>
+                    </table>
+                </el-collapse-item>
+                <el-collapse-item name="2">
+                    <template slot="title">
+                        <span class="zhouFont">接单信息</span>
+                    </template>
+                    <table class="zhouTable">
+                        <tr>
+                            <td>接单时间：2019-08-02</td>
+                            <td>操作员：周全</td>
+                        </tr>
+                    </table>
+                </el-collapse-item>
+                <el-collapse-item name="3">
+                    <template slot="title">
+                        <span class="zhouFont">拒单信息</span>
+                    </template>
+                    <table style="width: 50%;font-size: 15px">
+                        <tr style="height: 85px">
+                            <td>拒单时间：2019-08-02</td>
+                            <td>操作员：周全</td>
+                        </tr>
+                        <tr style="height: 150px">
+                            <td colspan="2">
+                                <div style="float: left;width: 18%">
+                                    拒绝理由：
+                                </div>
+                                <div style="float: left;width: 82%">
+                                <textarea class="zhouText" disabled="disabled" readonly="readonly">管理员审核不通过，307号钢材已经断货，该订单无法处理。
+                                </textarea>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </el-collapse-item>
+                <el-collapse-item name="4">
+                    <template slot="title">
+                        <span class="zhouFont">生产计划安排</span>
+                    </template>
+                    <table class="zhouTable">
+                        <tr>
+                            <td>生产计划编号：{{order.orderSeq}}</td>
+                            <td>生产产品：{{order.orderSource}}</td>
+                            <td>计划数量：{{order.productName}}</td>
+                        </tr>
+                        <tr>
+                            <td>计划开始日期：{{order.productCount}}</td>
+                            <td>计划结束日期：{{order.endDate}}</td>
+                            <td>计划状态：{{order.createTime}}</td>
+                        </tr>
+                    </table>
+                </el-collapse-item>
+                <el-collapse-item name="5">
+                    <template slot="title">
+                        <span class="zhouFont">工单安排</span>
+                    </template>
+                    <el-table
+                            :data="jobOrder"
+                            style="width: 100%">
+                        <el-table-column
+                                align="center" prop="scheduleSeq"
+                                label="工单编号"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="equipmentSeq" align="center"
+                                label="设备序号"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="scheduleCount" align="center"
+                                label="生产数量">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="开始日期">
+                            <template slot-scope="scope">
+                                <i class="el-icon-time"></i>
+                                <span style="margin-left: 10px">{{ scope.row.startDate }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="结束日期">
+                            <template slot-scope="scope">
+                                <i class="el-icon-time"></i>
+                                <span style="margin-left: 10px">{{ scope.row.endDate }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="scheduleStatus" align="center"
+                                label="工单状态">
+                        </el-table-column>
+                    </el-table>
+                </el-collapse-item>
+                <el-collapse-item name="6">
+                    <template slot="title">
+                        <span class="zhouFont">报工情况</span>
+                    </template>
+                    <el-table
+                            :data="dailyWork"
+                            style="width: 100%">
+                        <el-table-column
+                                prop="scheduleSeq" align="center"
+                                label="工单编号"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="equipmentSeq" align="center"
+                                label="设备序号"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="scheduleCount" align="center"
+                                label="工单数量">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="加工开始时间">
+                            <template slot-scope="scope">
+                                <i class="el-icon-time"></i>
+                                <span style="margin-left: 10px">{{ scope.row.startDate }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="加工结束时间">
+                            <template slot-scope="scope">
+                                <i class="el-icon-time"></i>
+                                <span style="margin-left: 10px">{{ scope.row.endDate }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="workingCount" align="center"
+                                label="加工数量">
+                        </el-table-column>
+                        <el-table-column
+                                prop="qualifiedCount" align="center"
+                                label="合格数量">
+                        </el-table-column>
+                    </el-table>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+
     </div>
 </template>
 
@@ -27,10 +172,46 @@
         name: "OrderDetail",
         data() {
             return {
-                activeNames: ['1']
+                activeNames: ['1'],
+                order: {
+                    orderSeq: 'O20190803164530',
+                    orderSource: '线下订单',
+                    productName: '罐装豆豉鱼',
+                    productCount: 589,
+                    finishedCount: 234,
+                    endDate: '2016-05-02',
+                    orderStatus: 10,
+                    factoryYield: '280罐/天',
+                    flag: 1,
+                    createTime: '2019-08-02',
+                    createUserName: '周全',
+                    updateTime: '2016-05-02',
+                    updateUserName: '连文凯',
+                },
+                jobOrder:[
+                    {
+                        scheduleSeq:"W2019086989",
+                        equipmentSeq:"DX3602",
+                        scheduleCount:10,
+                        startDate:"2016-05-02",
+                        endDate:"2016-05-06",
+                        scheduleStatus:10
+                    },
+                ],
+                dailyWork:[
+                    {
+                        scheduleSeq:"W2019086989",
+                        equipmentSeq:"DX3602",
+                        scheduleCount:10,
+                        startDate:"2016-05-02",
+                        endDate:"2016-05-06",
+                        workingCount:10,
+                        qualifiedCount:8
+                    }
+                ]
             };
         },
-        created(){
+        created() {
             console.log(this.$route.params.order);
         },
         methods: {
@@ -42,5 +223,32 @@
 </script>
 
 <style scoped>
+    .position {
+        margin-top: 30px;
+        margin-left: 30px;
+    }
 
+    .zhouTable tr {
+        height: 85px;
+        font-size: 15px;
+    }
+
+    .zhouTable td {
+        width: 20%;
+    }
+
+    .zhouFont {
+        font-size: 20px;
+        color: darkblue;
+    }
+
+    .zhouText {
+        resize: none;
+        height: 145px;
+        font-size: large;
+        width: 100%;
+        border-color: black;
+        background-color: #ffffff;
+        padding: 5px;
+    }
 </style>
