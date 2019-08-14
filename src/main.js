@@ -5,6 +5,9 @@ import axios from 'axios'
 import myGlobal from './router/global'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import store from "./store";
+import Echarts from 'echarts'
+
 
 
 Vue.use(ElementUI);
@@ -14,8 +17,11 @@ axios.defaults.baseURL = 'http://localhost:8081'
 Vue.prototype.$ajax=axios
 //挂载到Vue实例上面
 Vue.prototype.MYGLOBAL=myGlobal
+//引入echarts
+Vue.prototype.$echarts = Echarts
 
 new Vue({
 	router:router,
+    store,//所有组件都多了一个属性：$store
   render: h => h(App),
 }).$mount('#app')
