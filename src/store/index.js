@@ -36,13 +36,6 @@ const mutations = {
     clear_tabs(state){
         state.openedTabs = [];
     },
-    closeOthers_tabs(state){
-        state.openedTabs.forEach((tab,index)=>{
-            if(tab.route !== state.activeIndex || tab.route !== '/home/index'){
-                state.openedTabs.splice(index,1);
-            }
-        })
-    },
     // 设置当前激活的tab
     set_active_index (state, index) {
         state.activeIndex = index;

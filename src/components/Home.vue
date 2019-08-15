@@ -11,9 +11,7 @@
                 <Tabs></Tabs>
                 <!--缓存路由组件-->
                 <div class="con">
-                <keep-alive>
                     <router-view></router-view>
-                </keep-alive>
                 </div>
             </el-main>
         </el-container>
@@ -66,6 +64,7 @@
         display: block;
     }
 
-    .con {
+    .con{
+        overflow: auto;
     }
 </style>
