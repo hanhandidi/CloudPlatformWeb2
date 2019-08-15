@@ -68,13 +68,38 @@
     /* 设置持续时间和动画函数 */
 
 
+    /*.slide-fade-enter {*/
+    /*}*/
+
+    /*.slide-fade-leave {*/
+    /*    width:900px;*/
+
+    /*}*/
+
+    /*.slide-fade-enter-active {*/
+    /*}*/
+
+    /*.slide-fade-leave-active {*/
+    /*    transition:width 2s;*/
+    /*    -moz-transition:width 2s; !* Firefox 4 *!*/
+    /*    -webkit-transition:width 2s; !* Safari and Chrome *!*/
+    /*    -o-transition:width 2s; !* Opera *!*/
+    /*}*/
+
+    /*.slide-fade-enter-to {*/
+    /*}*/
+
+    /*.slide-fade-leave-to {*/
+    /*    width:1800px!important;*/
+    /*}*/
+
 
     .slide-fade-enter {
-        transform:perspective(2000px) rotateY(-180deg);
+        transform:perspective(1800px) rotateY(-180deg);
     }
 
     .slide-fade-leave {
-        transform:perspective(2000px) rotateY(0);
+        transform:perspective(1800px) rotateY(0);
     }
 
     .slide-fade-enter-active {
@@ -90,11 +115,11 @@
     }
 
     .slide-fade-enter-to {
-        transform:perspective(2000px) rotateY(0deg);
+        transform:perspective(1800px) rotateY(0deg);
     }
 
     .slide-fade-leave-to {
-        transform:perspective(2000px) rotateY(180deg);
+        transform:perspective(1800px) rotateY(180deg);
     }
 
 

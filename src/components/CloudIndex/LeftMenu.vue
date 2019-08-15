@@ -26,11 +26,11 @@
 
                             <!-- 三级菜单 -->
                             <el-menu-item :index="`/home/${itemChild_Child.index}`" :key="itemChild_Child.index"
-                                          v-for="itemChild_Child in itemChild.subs"  @click="openTab">
+                                          v-for="itemChild_Child in itemChild.subs"  @click="openTab(itemChild_Child.title)">
                                 <i :class="itemChild_Child.icon"></i><span slot="title">{{itemChild_Child.title}}</span>
                             </el-menu-item>
                         </el-submenu>
-                        <el-menu-item :index="`/home/${itemChild.index}`" :key="itemChild.index" v-else @click="openTab">
+                        <el-menu-item :index="`/home/${itemChild.index}`" :key="itemChild.index" v-else @click="openTab(itemChild.title)">
                             <i :class="itemChild.icon"></i><span slot="title">{{itemChild.title}}</span>
                         </el-menu-item>
                     </template>
@@ -50,41 +50,28 @@
         data() {
             return {
                 menu: menu,
+                title:''
             }
         },
-        mounted() {
-            // 刷新时以当前路由做为tab加入tabs
-            // 当前路由不是首页时，添加首页以及另一页到store里，并设置激活状态
-            // 当当前路由是首页时，添加首页到store，并设置激活状态
-            /*if (this.$route.path !== '/home' && this.$route.path !== '/home/index') {
-                //console.log('1',this.$route.path);
-                this.$store.commit('add_tabs', {route: '/home/index' , name: '首页'});
-                this.$store.commit('add_tabs', {route: this.$route.path , name: this.$route.name });
-                this.$store.commit('set_active_index', this.$route.path);
-            } else {
-                //console.log('2',this.$route.path);
-                this.$store.commit('add_tabs', {route: '/home/index', name: '首页'});
-                this.$store.commit('set_active_index', '/home/index');
-                this.$router.replace('/home/index');
-            }*/
-            //this.$store.commit('add_tabs', {route: '/home/index', name: '首页'});
-        },
         methods:{
-            openTab(){
+            openTab(title){
+                console.log("title",title)
                 let flag = false;
                 for (let item of this.$store.state.openedTabs) {
-                    if(item.name===this.$route.name){
+                    if(item.title===title){
                         this.$store.commit('set_active_index', this.$route.path);
+                        this.$router.push(this.$route.path);
                         flag=true;
                         break;
                     }
                 }
                 if(!flag){
-                    this.$store.commit('add_tabs', {route: this.$route.path, name: this.$route.name});
+                    this.$store.commit('add_tabs', {route: this.$route.path, title: title});
                     this.$store.commit('set_active_index', this.$route.path);
+                    this.$router.push(this.$route.path);
                 }
             }
-        }
+        },
     }
 </script>
 

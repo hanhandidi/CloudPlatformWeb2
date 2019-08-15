@@ -1,33 +1,45 @@
 <template>
     <div class="tag">
-        <i class="el-icon-d-arrow-left leftBut"></i>
-        <i class="el-icon-house leftBut" @click="toIndex"></i>
-        <div class="mainBox" :style="{width:$store.state.isCollapse?1311+'px':1126+'px'}">
-            <el-tabs closable type="card" v-model="activeIndex" @tab-click='tabClick'
-                     @tab-remove='tabRemove'>
-                <el-tab-pane
-                        :key="index"
-                        :label="item.name"
-                        :name="item.route"
-                        v-for="(item, index) in openTab"
-                >
-                </el-tab-pane>
-            </el-tabs>
-        </div>
-        <i class="el-icon-d-arrow-right rightBut"></i>
-        <el-dropdown hide-on-click @command="handleTags">
-            <i class="el-icon-arrow-down rightBut pageAllBut"></i>
-            <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command=all>关闭全部</el-dropdown-item>
-                <el-dropdown-item command="others">关闭其他</el-dropdown-item>
-            </el-dropdown-menu>
-        </el-dropdown>
+        <el-row>
+            <el-col :span="1">
+                <div class="leftBut"><i class="el-icon-house" @click="toIndex"></i></div>
+                <div class="leftBut"><i class="el-icon-d-arrow-left"></i></div>
+            </el-col>
+            <el-col :span="22">
+                <div class="mainBox">
+                    <el-tabs closable type="card" v-model="activeIndex" @tab-click="tabClick" @tab-remove="tabRemove">
+                        <el-tab-pane
+                                :key="index"
+                                :label="item.title"
+                                :name="item.route"
+                                v-for="(item, index) in openTab"
+                        >
+                        </el-tab-pane>
+                    </el-tabs>
+                </div>
+            </el-col>
+            <el-col :span="1">
+                <div>
+                    <i style="display:block;height: 40px;float: left;font-size: 20px;line-height: 40px;cursor: pointer"
+                       class="el-icon-d-arrow-right"></i>
+                    <el-dropdown style="display:block;height: 40px;float: left;font-size: 20px;line-height: 40px;cursor: pointer"
+                                 hide-on-click @command="handleTags">
+                        <i class="el-icon-arrow-down"></i>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command=all>关闭全部</el-dropdown-item>
+                            <el-dropdown-item command="others">关闭其他</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+            </el-col>
+        </el-row>
     </div>
 </template>
 <script>
     export default {
         data() {
-            return {}
+            return {
+            }
         },
         computed: {
             openTab() {
@@ -48,7 +60,7 @@
         methods: {
             //进入主页
             toIndex() {
-                this.$router.push('/home/index')
+                this.$router.push('/home')
             },
             //点击标签触发
             tabClick() {
@@ -57,14 +69,14 @@
                 this.$router.push({path: this.activeIndex});
             },
             //关闭标签触发
-            tabRemove(targetName) {
-                console.log("tabRemove", targetName);
+            tabRemove(route) {
+                console.log("tabRemove", route);
                 //首页不删
                 /*if (targetName === '/' || targetName === '/home/index') {
                     console.log('首页不删')
                     return
                 }*/
-                this.$store.commit('delete_tabs', targetName);
+                this.$store.commit('delete_tabs', route);
                 if (this.activeIndex === targetName) {
                     // 设置当前激活的路由
                     if (this.openTab && this.openTab.length >= 1) {
@@ -83,27 +95,25 @@
                 this.$router.push('/home/index');
             },
             // 关闭其他标签
-             closeOthers() {
-                 this.$store.commit('clear_tabs');
-                 this.$store.commit('add_tabs', {route: this.$route.path, name: this.$route.name});
-                 this.$store.commit('set_active_index', this.$route.path);
-                 this.$router.push({path: this.activeIndex});
-             },
+            closeOthers() {
+                this.$store.commit('clear_tabs');
+                this.$store.commit('add_tabs', {route: this.$route.path, title: this.$route.title});
+                this.$store.commit('set_active_index', this.$route.path);
+                this.$router.push({path: this.activeIndex});
+            },
             handleTags(command) {
                 command === 'others' ? this.closeOthers() : this.closeAll();
             }
         },
 
-        /*watch: {
+       /* watch: {
             '$route'(to) {
                 //判断路由是否已经打开
                 //已经打开的 ，将其置为active
                 //未打开的，将其放入队列里
                 let flag = false;
                 for (let item of this.openTab) {
-                    console.log("item.name", item.name)
-                    console.log("t0.name", to.name)
-                    if (item.name === to.name) {
+                    if (item.route === to.route) {
                         //console.log('to.path', to.path);
                         this.$store.commit('set_active_index', to.path)
                         flag = true;
@@ -113,7 +123,7 @@
                 if (!flag) {
                     console.log('to.path', to.path);
                     if (to.path !== "/home/index") {
-                        this.$store.commit('add_tabs', {route: to.path, name: to.name});
+                        this.$store.commit('add_tabs', {route: to.path, title: this.title});
                         this.$store.commit('set_active_index', to.path);
                     }
                 }
@@ -133,51 +143,26 @@
     }
 
     .tag .mainBox {
-        width: 400px;
+        width: 100%;
         height: 40px;
         float: left;
         overflow: hidden;
-        position: relative;
+        /*position: relative;*/
         box-sizing: border-box;
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
     }
 
-    .tag .leftBut {
-        display: block;
-        float: left;
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
+    .leftBut{
+        display: inline-block;
+        width: 25px;
         text-align: center;
-        font-size: 18px;
-        cursor: pointer;
-        border-right: 1px solid #f6f6f6;
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-    }
-
-    .tag .rightBut {
-        display: block;
-        float: left;
-        width: 40px;
-        height: 40px;
         line-height: 40px;
-        text-align: center;
-        font-size: 18px;
+        font-size: 20px;
         cursor: pointer;
-        border-left: 1px solid #f6f6f6;
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
     }
-
-    .leftBut:hover, .rightBut:hover {
+    .leftBut:hover{
         background-color: #f6f6f6;
     }
 
-    .pageAllBut {
-        position: relative;
-    }
 </style>

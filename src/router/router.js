@@ -28,13 +28,16 @@ import TraceList from "../components/ProduceTrace/TraceList"
 import ReportList from "../components/ProduceTrace/ReportList"
 import Register from "../components/AccountManage/Register";
 import OrderDetail from "../components/OrderManage/OrderDetail"
+import UserManage from "../components/AuthorityManage/UserManage";
+import RoleManage from "../components/AuthorityManage/RoleManage";
+import PermitManage from "../components/AuthorityManage/PermitManage";
 Vue.use(Router);
 //创建路由对象,配置路由
 const router = new Router({
     routes: [
         {
             path: "/",
-            redirect: "/login"
+            redirect: "/home/roleManage"
         },
         {
             path: "/",
@@ -156,6 +159,24 @@ const router = new Router({
                     path:"traceList",
                     name:'跟踪列表',
                     component:TraceList
+                },
+                {
+                    //用户管理
+                    path:"userManage",
+                    name:'用户管理',
+                    component:UserManage
+                },
+                {
+                    //角色管理
+                    path:"roleManage",
+                    name:'角色管理',
+                    component:RoleManage
+                },
+                {
+                    //权限/菜单管理
+                    path:"permitManage",
+                    name:'权限管理',
+                    component:PermitManage
                 }
             ]
         }

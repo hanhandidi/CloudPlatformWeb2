@@ -1,7 +1,7 @@
 
-const userId='';
-const userName='';
-const factoryId='';
+const userId=2;
+const userName=2;
+const factoryId=2;
 
 const url='http://10.10.84.8:8088';
 const token='589746';
