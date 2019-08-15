@@ -12,7 +12,7 @@ import Echarts from 'echarts'
 
 Vue.use(ElementUI);
 Vue.config.productionTip = false
-axios.defaults.baseURL = 'http://localhost:8081'
+axios.defaults.baseURL = 'http://10.10.84.8:8088'
 //把axios添加到Vue实例属性上，供全局使用
 Vue.prototype.$ajax=axios
 //挂载到Vue实例上面

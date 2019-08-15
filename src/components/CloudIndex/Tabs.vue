@@ -51,9 +51,9 @@
                 this.$router.push('/home/index')
             },
             //点击标签触发
-            tabClick(tab) {
-                console.log("tab", tab);
-                console.log('active', this.activeIndex);
+            tabClick() {
+                //console.log("tab", tab);
+                //console.log('active', this.activeIndex);
                 this.$router.push({path: this.activeIndex});
             },
             //关闭标签触发
@@ -68,7 +68,7 @@
                 if (this.activeIndex === targetName) {
                     // 设置当前激活的路由
                     if (this.openTab && this.openTab.length >= 1) {
-                        console.log('=============', this.openTab[this.openTab.length - 1].route)
+                        //console.log('=============', this.openTab[this.openTab.length - 1].route)
                         this.$store.commit('set_active_index', this.openTab[this.openTab.length - 1].route);
                         this.$router.push({path: this.activeIndex});
                     } else {
@@ -79,28 +79,30 @@
             // 关闭全部标签
             closeAll() {
                 this.$store.commit('clear_tabs');
-                this.$store.commit('add_tabs', {route: '/home/index', name: '首页'});
                 this.$store.commit('set_active_index', '/home/index');
                 this.$router.push('/home/index');
             },
             // 关闭其他标签
-            /* closeOthers() {
-                 this.$store.commit('closeOthers_tabs');
-             },*/
+             closeOthers() {
+                 this.$store.commit('clear_tabs');
+                 this.$store.commit('add_tabs', {route: this.$route.path, name: this.$route.name});
+                 this.$store.commit('set_active_index', this.$route.path);
+                 this.$router.push({path: this.activeIndex});
+             },
             handleTags(command) {
                 command === 'others' ? this.closeOthers() : this.closeAll();
             }
         },
 
-        watch: {
+        /*watch: {
             '$route'(to) {
                 //判断路由是否已经打开
                 //已经打开的 ，将其置为active
                 //未打开的，将其放入队列里
                 let flag = false;
                 for (let item of this.openTab) {
-                    //console.log("item.name", item.name)
-                    //console.log("t0.name", to.name)
+                    console.log("item.name", item.name)
+                    console.log("t0.name", to.name)
                     if (item.name === to.name) {
                         //console.log('to.path', to.path);
                         this.$store.commit('set_active_index', to.path)
@@ -116,7 +118,7 @@
                     }
                 }
             }
-        }
+        }*/
     }
 </script>
 <style scoped>

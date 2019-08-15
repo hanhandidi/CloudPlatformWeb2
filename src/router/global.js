@@ -3,7 +3,7 @@ const userId='';
 const userName='';
 const factoryId='';
 
-const url='https://bird.ioliu.cn';
+const url='http://10.10.84.8:8088';
 const token='589746';
 export default {
 	userId,

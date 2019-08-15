@@ -71,8 +71,18 @@
         },
         methods:{
             openTab(){
-                this.$store.commit('add_tabs', {route: this.$route.path, name: this.$route.name});
-                this.$store.commit('set_active_index', this.$route.path);
+                let flag = false;
+                for (let item of this.$store.state.openedTabs) {
+                    if(item.name===this.$route.name){
+                        this.$store.commit('set_active_index', this.$route.path);
+                        flag=true;
+                        break;
+                    }
+                }
+                if(!flag){
+                    this.$store.commit('add_tabs', {route: this.$route.path, name: this.$route.name});
+                    this.$store.commit('set_active_index', this.$route.path);
+                }
             }
         }
     }

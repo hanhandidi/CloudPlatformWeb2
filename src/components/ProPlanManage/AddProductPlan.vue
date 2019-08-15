@@ -3,10 +3,13 @@
         <div class="position">
             <el-form  :model="productPlan"  label-width="125px">
                 <el-form-item label="订单编号">
-                    <el-select v-model="productPlan.orderSeq" >
-                        <el-option label="O20190845452" value="O20190845452"></el-option>
-                        <el-option label="O20190458525" value="O20190458525"></el-option>
-                        <el-option label="O20190844852" value="O20190844852"></el-option>
+                    <el-select v-model="productPlan.orderSeq" :disabled="onOff" @change="currentOpt" >
+                        <el-option
+                                v-for="(item,index) in productOrder"
+                                :key="index"
+                                :label="item.orderSeq"
+                                :value="index">
+                        </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产品名称" >
@@ -58,12 +61,37 @@
                     planStartDate: '',
                     planEndDate:'',
                     flag: 0
-                }
+                },
+                onOff:false,
+                productOrder:[{}],
             };
+        },
+        created(){//如果是转计划就执行if否则执行else
+          if(this.$route.query.order!== undefined){
+              let acceptOrder=this.$route.query.order;
+              this.productPlan.orderSeq=acceptOrder.orderSeq;
+              this.productPlan.productName=acceptOrder.productName;
+              this.productPlan.planCount=acceptOrder.productCount;
+              this.productPlan.deliveryDate=acceptOrder.endDate;
+              this.onOff=true;
+          }else {
+              this.$ajax.post("/productOrder/getAll",{}).then(response=>{
+                  this.productOrder = response.data.data;
+                  console.log(this.productOrder);
+              }).catch(function (error) {
+                  console.log(error);
+              });
+          }
         },
         methods:{
             onSubmit(){
                 console.log(this.productPlan);
+            },
+            currentOpt(index){
+                let productIndex=this.productOrder[index];
+                this.productPlan.productName=productIndex.tProduct.productName;
+                this.productPlan.planCount=productIndex.productCount;
+                this.productPlan.deliveryDate=productIndex.endDate;
             }
         }
     }

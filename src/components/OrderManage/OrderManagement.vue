@@ -137,22 +137,21 @@
             </el-table-column>
             <el-table-column align="center" label="操作" fixed="right" width="240">
                 <template slot-scope="scope">
-                    <el-button size="mini" v-if="scope.row.orderStatus===10">
+                    <el-button round type="primary" size="mini" v-if="scope.row.orderStatus===10">
                         接单
                     </el-button>
-                    <el-button size="mini" v-if="scope.row.orderStatus===10">
+                    <el-button type="warning" round size="mini" v-if="scope.row.orderStatus===10">
                         拒单
                     </el-button>
-                    <el-button size="mini" v-if="scope.row.orderStatus===20">
+                    <el-button type="info" round  v-if="scope.row.orderStatus===20"
+                               size="mini"  @click="handleChange(scope.$index,scope.row)">
                         转为生产计划
                     </el-button>
-                    <el-button size="mini" v-if="scope.row.orderStatus===40">
+                    <el-button type="success" round size="mini" v-if="scope.row.orderStatus===40">
                         完成订单
                     </el-button>
-                <!--    <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
-                        编辑
-                    </el-button>-->
-                    <el-button size="mini" round @click="handleEdit(scope.$index, scope.row)">
+                    <el-button type="primary" round plain size="mini"
+                    @click="handleDetail(scope.$index, scope.row)">
                         查看详情
                     </el-button>
                 </template>
@@ -252,7 +251,7 @@
             }
         },
         methods: {
-            handleEdit(index, row) {
+            handleDetail(index, row) {//查看订单详情
                 this.$router.push({
                     name:"orderDetail",
                     params:{
@@ -260,8 +259,14 @@
                     }
                 });
             },
-            handleDelete(index, row) {
-                console.log(index, row);
+            handleChange(index, row) { // 点击转为生产计划按钮触发
+                console.log("转为生产计划"+index, row);
+                this.$router.push({
+                    path:"addProductPlan",
+                    query:{
+                        order:row
+                    }
+                });
             },
             onSubmit() {
                 console.log('submit!');
