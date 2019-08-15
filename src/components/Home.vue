@@ -32,7 +32,7 @@
     }
 </script>
 
-<style scoped>
+<style>
     .el-main, .el-header {
         padding: 0px !important;
     }

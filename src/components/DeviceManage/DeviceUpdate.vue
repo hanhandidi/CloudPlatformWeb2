@@ -1,22 +1,24 @@
 <template>
     <div>
         <div class="position">
-            <el-form ref="device" :model="equipment" :rules="deviceRules"  label-width="80px">
-                <el-form-item label="设备序号" prop="seq">
-                    <el-input style="width: 50%"  v-model="equipment.seq"></el-input>
+            <el-form ref="device" :model="equipment" :rules="deviceRules" label-width="80px">
+                <el-form-item label="设备序号" prop="equipmentSeq">
+                    <el-input style="width: 50%" v-model="equipment.equipmentSeq"></el-input>
                 </el-form-item>
-                <el-form-item label="设备名称" prop="name">
-                    <el-input style="width: 50%"  v-model="equipment.name"></el-input>
+                <el-form-item label="设备名称" prop="equipmentName">
+                    <el-input style="width: 50%" v-model="equipment.equipmentName"></el-input>
                 </el-form-item>
                 <el-form-item label="设备图片">
-                    <el-upload class="avatar-uploader" action="http://localhost:8081/upload" :show-file-list="false" :on-success="handleAvatarSuccess"
+                    <el-upload class="avatar-uploader" action="http://10.10.84.8:8088/upload" :show-file-list="false"
+                               :on-success="handleAvatarSuccess"
                                :before-upload="beforeAvatarUpload">
-                        <img v-if="equipment.imgUrl" :src="`http://localhost:8081/${equipment.imgUrl}`" class="avatar">
+                        <img v-if="equipment.equipmentImgUrl" :src="`${this.MYGLOBAL.url}/${equipment.equipmentImgUrl}`"
+                             class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="设备状态">
-                    <el-select v-model="equipment.status" >
+                    <el-select v-model="equipment.equipmentStatus">
                         <el-option label="启用" value="10"></el-option>
                         <el-option label="停用" value="20"></el-option>
                         <el-option label="故障" value="30"></el-option>
@@ -29,8 +31,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="onSubmit('device')">立即创建</el-button>
-                    <el-button>取消</el-button>
+                    <el-button type="primary" @click="onSubmit('device')">提交修改</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -42,15 +43,9 @@
         name: "DeviceUpdate",
         data() {
             return {
-                equipment: {
-                    seq: '',
-                    name: '',
-                    imgUrl: '',
-                    status: '10',
-                    flag: 0,
-                },
+                equipment: {},
                 deviceRules: {
-                    seq: [{
+                    equipmentSeq: [{
                         required: true,
                         message: '请输入设备序号',
                         trigger: 'blur'
@@ -62,7 +57,7 @@
                             trigger: 'blur'
                         }
                     ],
-                    name: [
+                    equipmentName: [
                         {
                             required: true,
                             message: '请输入设备名称',
@@ -72,18 +67,32 @@
                 }
             };
         },
-        created(){
-            let device=this.$route.params.device;
-            this.equipment.seq=device.seq;
-            this.equipment.name=device.name;
-            this.equipment.status=device.status;
-            this.equipment.flag=device.flag;
+        beforeRouteEnter(to, from, next) {
+            next(
+                (vm) => {
+                    vm.getData();
+                }
+            )
         },
         methods: {
             onSubmit(device) {
                 this.$refs[device].validate((valid) => {
                     if (valid) {
-                        console.log(this.equipment);
+                        this.$ajax.put("/equipment/update", this.equipment).then(response => {
+                            let code = response.data.code;
+                            let message = response.data.message;
+                            if (code === 200) {
+                                this.$message({
+                                    message: message,
+                                    type: 'success'
+                                });
+                            } else {
+                                this.$message.error(message);
+                            }
+                        }).catch(function (error) {
+                            this.$message.error('添加失败');
+                            console.log("添加失败：" + error);
+                        });
                     } else {
                         console.log('error submit!!');
                         return false;
@@ -91,30 +100,34 @@
                 });
             },
             handleAvatarSuccess(res, file) {
-                //this.imageUrl = URL.createObjectURL(file.raw);
-                this.imageUrl = res;
-                console.log(res);
+                this.equipment.equipmentImgUrl = res.data;
                 console.log("file:" + file);
             },
             beforeAvatarUpload(file) {
                 const isJPG = file.type === 'image/jpeg';
                 const isPNG = file.type === 'image/png';
                 const isLt2M = file.size / 1024 / 1024 < 2;
-                if (!isJPG&&!isPNG) {
+                if (!isJPG && !isPNG) {
                     this.$message.error('上传设备图片只能是JPG或PNG格式!');
                 }
                 if (!isLt2M) {
                     this.$message.error('上传设备图片大小不能超过 2MB!');
                 }
-                return (isJPG||isPNG) && isLt2M;
+                return (isJPG || isPNG) && isLt2M;
             },
+            getData() {
+                console.log("进来")
+                let device = this.$route.params.device;
+                this.equipment = device;
+                this.equipment.equipmentStatus = this.equipment.equipmentStatus.toString();
+            }
 
         }
     }
 </script>
 
 <style scoped>
-    .position{
+    .position {
         margin-top: 30px;
         margin-left: 30px;
     }

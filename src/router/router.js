@@ -97,7 +97,7 @@ const router = new Router({
                 {
                     //更新设备
                     path: "deviceUpdate",
-                    name:'更新设备',
+                    name:"updateDevice",
                     component: DeviceUpdate
                 },
                 {
