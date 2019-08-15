@@ -20,9 +20,9 @@ TODO:能编辑的字段只有加工数量和报工状态
                 <div class="infoDiv"><el-tag >结束日期</el-tag><el-tag type="info">{{scheItem.endDate}}</el-tag></div>
             </li>
         </ul>
-
         <div style="width: 100px; margin: 10px;">
             <el-button type="info">报工列表</el-button>
+            <el-button type="info" style="margin: 0px; margin-top: 10px;" @click="handelCreate">新建报工</el-button>
         </div>
         <el-table :data="report" style="width: 100%">
             <el-table-column prop="reportSeq" label="报工序列" ></el-table-column>
@@ -38,32 +38,62 @@ TODO:能编辑的字段只有加工数量和报工状态
                 </template>
             </el-table-column>
         </el-table>
-        <el-dialog  width="30%" title="内层 Dialog" :visible.sync="innerVisible" append-to-body>
-            <el-form :model="reportItem"  ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-dialog  width="30%" title="编辑报工" :visible.sync="editVisible" append-to-body>
+            <el-form :model="updateItem"  ref="updateForm" label-width="100px" class="demo-ruleForm" :rules="updateRules">
                 <el-form-item label="加工开始时间">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="reportItem.startDate" style="width: 100%;"></el-date-picker>
+                    <el-date-picker type="date" placeholder="选择日期" v-model="updateItem.startDate" style="width: 100%;"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="加工结束时间">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="reportItem.startDate" style="width: 100%;"></el-date-picker>
+                    <el-date-picker type="date" placeholder="选择日期" v-model="updateItem.endTime" style="width: 100%;"></el-date-picker>
                 </el-form-item>
-                <el-form-item label="加工数量">
-                    <el-input-number v-model="reportItem.workingCount" controls-position="right"  :min="0" ></el-input-number>
+                <el-form-item label="加工数量" prop="numRule">
+                    <el-input-number v-model="updateItem.workingCount" controls-position="right"  :min="min" ></el-input-number>
                 </el-form-item>
-                <el-form-item label="合格数量">
-                    <el-input-number v-model="reportItem.qualifiedCount" controls-position="right"  :min="0" ></el-input-number>
+                <el-form-item label="合格数量" >
+                    <el-input-number v-model="updateItem.qualifiedCount" controls-position="right"  :min="0" ></el-input-number>
                 </el-form-item>
                 <el-form-item label="不合格数量">
-                    <el-input-number v-model="reportItem.unqualifiedCount" controls-position="right"  :min="0" ></el-input-number>
+                    <el-input-number v-model="updateItem.unqualifiedCount" controls-position="right"  :min="0" ></el-input-number>
                 </el-form-item>
                 <!--还要完成Boolean到string的转换-->
                 <el-form-item label="结束报工">
-                    <el-switch v-model="reportItem.completeFlag" active-color="#13ce66" ></el-switch>
+                    <el-switch v-model="updateItem.completeFlag" active-color="#13ce66" ></el-switch>
                 </el-form-item>
                 <el-form-item label="备注">
-                    <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="reportItem.bak"></el-input>
+                    <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="updateItem.bak"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                    <el-button type="primary" @click="onUpdateSubmit('updateForm')"  ref="updateBtn">提交</el-button>
+                    <el-button>取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+        <el-dialog  width="30%" title="创建报工" :visible.sync="createVisible" append-to-body>
+            <el-form :model="createItem"  ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="加工开始时间">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="createItem.startDate" style="width: 100%;"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="加工结束时间">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="createItem.endTime" style="width: 100%;"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="加工数量">
+                    <el-input-number v-model="createItem.workingCount" controls-position="right"  :min="0" ></el-input-number>
+                </el-form-item>
+                <el-form-item label="合格数量">
+                    <el-input-number v-model="createItem.qualifiedCount" controls-position="right"  :min="0" ></el-input-number>
+                </el-form-item>
+                <el-form-item label="不合格数量">
+                    <el-input-number v-model="createItem.unqualifiedCount" controls-position="right"  :min="0" ></el-input-number>
+                </el-form-item>
+                <!--还要完成Boolean到string的转换-->
+                <el-form-item label="结束报工">
+                    <el-switch v-model="createItem.completeFlag" active-color="#13ce66" ></el-switch>
+                </el-form-item>
+                <el-form-item label="备注">
+                    <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="createItem.bak"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="onCreateSubmit"  id="createBtn">创建报工</el-button>
                     <el-button>取消</el-button>
                 </el-form-item>
             </el-form>
@@ -75,8 +105,19 @@ TODO:能编辑的字段只有加工数量和报工状态
 <script>
     export default {
         data() {
+            var checkNum = (rule, value, callback) => {
+                if (this.updateItem.workingCount < this.updateItem.qualifiedCount + this.updateItem.unqualifiedCount) {
+                    return callback(new Error('不能小于合格与未合格数量之和'));
+                }
+            };
             return {
-                reportItem: {
+                updateRules: {
+                    numRule: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ]
+                },
+                min:0,
+                updateItem:{
                     id:'',
                     flag:'',
                     createTime:'',
@@ -88,9 +129,28 @@ TODO:能编辑的字段只有加工数量和报工状态
                     equipmentSeq:'',
                     startTime:'',
                     endTime:'',
-                    workingCount:'',
-                    qualifiedCount:'',
-                    unqualifiedCount:'',
+                    workingCount:0,
+                    qualifiedCount:0,
+                    unqualifiedCount:0,
+                    completeFlag:true,
+                    factoryId:'',
+                    bak:'',
+                },
+                createItem: {
+                    id:'',
+                    flag:'',
+                    createTime:'',
+                    createUserid:'',
+                    updateTime:'',
+                    updateUserid:'',
+                    scheduleId:'',
+                    equipmentId:'',
+                    equipmentSeq:'',
+                    startTime:'',
+                    endTime:'',
+                    workingCount:0,
+                    qualifiedCount:0,
+                    unqualifiedCount:0,
                     completeFlag:true,
                     factoryId:'',
                     bak:'',
@@ -133,17 +193,34 @@ TODO:能编辑的字段只有加工数量和报工状态
                         endDate: '2019-6-5',
                         nete: '',
                     }],
-                innerVisible: false,
+                createVisible: false,
+                editVisible: false,
             };
         },
         methods: {
             handelEdit(item) {
-                this.reportItem = item;
-                this.innerVisible = true;
+                this.updateItem = item;
+                this.editVisible = true;
+                this.min = this.updateItem.qualifiedCount + this.updateItem.unqualifiedCount
             },
-            onSubmit(){
-                console.log(this.reportItem);
-                this.innerVisible = false;
+            handelCreate(){
+                this.createVisible = true;
+            },
+            onUpdateSubmit(updateForm){
+                console.log(this.updateItem);
+                this.$refs[updateForm].validate((valid) => {
+                    if (valid) {
+                        console.log('submit!');
+                        this.editVisible = false;
+                    }else{
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            onCreateSubmit(){
+                console.log(this.createItem.endTime);
+                this.createVisible = false;
             }
         }
     }

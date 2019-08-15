@@ -6,18 +6,19 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
 <template>
     <div style="margin: 20px;">
         <div class="position">
-            <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                <el-form-item label="关键字">
-                    <el-input v-model="formInline.user" ></el-input>
+            <el-form :inline="true" :model="queryInfo" class="demo-form-inline">
+                <el-form-item label="工单编号">
+                    <el-input v-model="queryInfo.equipmentSeq" ></el-input>
                 </el-form-item>
-                <el-form-item label="有效标志">
-                    <el-select style="width: 120px" v-model="formInline.region" placeholder="选择标志">
-                        <el-option label="有效" value="shanghai"></el-option>
-                        <el-option label="失效" value="beijing"></el-option>
+                <el-form-item label="工单状态">
+                    <el-select style="width: 120px" v-model="queryInfo.scheduleStatus" placeholder="选择工单状态">
+                        <el-option value="未开始" :label="queryInfo.scheduleStatus">未开始</el-option>
+                        <el-option value="生产中" :label="queryInfo.scheduleStatus">生产中</el-option>
+                        <el-option value="已结束" :label="queryInfo.scheduleStatus">已结束</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" icon="el-icon-search" round @click="onSubmit">搜索</el-button>
+                    <el-button type="primary" icon="el-icon-search" round @click="onQurey">搜索</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -173,9 +174,9 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                     }],
                 outerVisible: false,
                 scheItem:{},
-                formInline: {
-                    user: '',
-                    region: ''
+                queryInfo: {
+                    equipmentSeq: '',
+                    scheduleStatus:10,
                 },
                 productSchedule:[
                     {
@@ -270,8 +271,8 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                     return '已完成';
                 }
             },
-            onSubmit() {
-                console.log('submit!');
+            onQurey() {
+                console.log('submit!'+this.queryInfo.scheduleStatus+this.queryInfo.equipmentSeq);
             },
         }
     }

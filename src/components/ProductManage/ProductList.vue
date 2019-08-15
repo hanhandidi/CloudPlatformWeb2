@@ -49,8 +49,8 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
                             <el-tag v-if="props.row.flag=='0'" key="label2" type="danger" effect="dark">无效</el-tag>
                         </el-form-item>
                         <el-form-item label="所属工厂" style="width: 50%; ">
-                            <span>{{ props.row.factoryName }}</span>
-                        </el-form-item>
+                        <span>{{ props.row.factoryName }}</span>
+                    </el-form-item>
                         <el-form-item label="商品图片" style="width: 50%; ">
                             <!--<i class="el-icon-picture-outline"></i>-->
                             <img src="../../assets/logo.png" width="60px;"/>
@@ -167,7 +167,7 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
                     <span>{{ proItem.createTime }}</span>
                 </el-form-item>
                 <el-form-item label="创建者" style="width: 50%; ">
-                    <!--<i class="el-icon-s-custom"></i>-->
+                    <i class="el-icon-s-custom"></i>
                     <el-input v-model= "proItem.createUserName " disabled></el-input>
                 </el-form-item>
                 <el-form-item label="最近修改" style="width: 50%; ">
@@ -184,8 +184,6 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
                 <el-button type="primary" @click="onUpdate('proItem')">确 定</el-button>
             </div>
         </el-dialog>
-
-
     </div>
 </template>
 
@@ -193,7 +191,6 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
 <script>
     export default {
         data() {
-
             return {
                 rules: {
                     productName: [
@@ -207,47 +204,61 @@ TODO：-前台内部数据名称-"updateUserName"-产品更新者名称-关联�
                 proItem:{},//传到更新页面的信息，更新时提交给后台的信息
                 tableData: [
                     {
-                    id: 0,
-                    productName: '美国边境墙',
-                    productNum: 340,
-                    flag:1,
-                    factoryName:'动画梦工场',
-                    productImgUrl:'产品图片保存的路径',
-                    createTime:'产品创建时间',
-                    createUserName:'产品创建者名称-关联表',
-                    updateTime:'产品更新时间-非必添',
-                    updateUserName:'产品更新者名称-关联表'
-                },
+                        id: 0,
+                        productName: '美国边境墙',
+                        productNum: 340,
+                        flag:1,
+                        factoryName:'动画梦工场',
+                        productImgUrl:'产品图片保存的路径',
+                        createTime:'产品创建时间',
+                        createUserName:'产品创建者名称-关联表',
+                        updateTime:'产品更新时间-非必添',
+                        updateUserName:'产品更新者名称-关联表'
+                    },
                     {
-                    id: 1,
-                    productName: '特朗普宝宝',
-                    productNum: 100,
-                    flag:1,
-                    factoryName:'动画梦工场',
-                    productImgUrl:'产品图片保存的路径',
-                    createTime:'产品创建时间',
-                    createUserName:'产品创建者名称-关联表',
-                    updateTime:'产品更新时间-非必添',
-                    updateUserName:'产品更新者名称-关联表'
-                },
+                        id: 1,
+                        productName: '特朗普宝宝',
+                        productNum: 100,
+                        flag:1,
+                        factoryName:'动画梦工场',
+                        productImgUrl:'产品图片保存的路径',
+                        createTime:'产品创建时间',
+                        createUserName:'产品创建者名称-关联表',
+                        updateTime:'产品更新时间-非必添',
+                        updateUserName:'产品更新者名称-关联表'
+                    },
                     {
-                    id: 2,
-                    productName: '超级棒棒糖',
-                    productNum: 20,
-                    flag: 0,
-                    factoryName:'产品所属工厂-关联表',
-                    productImgUrl:'产品图片保存的路径',
-                    createTime:'产品创建时间',
-                    createUserName:'产品创建者名称-关联表',
-                    updateTime:'产品更新时间-非必添',
-                    updateUserName:'产品更新者名称-关联表'
-                }],
+                        id: 2,
+                        productName: '超级棒棒糖',
+                        productNum: 20,
+                        flag: 0,
+                        factoryName:'产品所属工厂-关联表',
+                        productImgUrl:'产品图片保存的路径',
+                        createTime:'产品创建时间',
+                        createUserName:'产品创建者名称-关联表',
+                        updateTime:'产品更新时间-非必添',
+                        updateUserName:'产品更新者名称-关联表'
+                    }],
                 queryInfo: {
                     proName: '',
                 }
             }
         },
+        mounted: function(){
+            this.getData();
+        },
         methods: {
+            getData(){
+                console.log("Getting data")
+                this.$ajax.post("/product/list",{
+                }).then(response=>{
+                    // this.equipments = response.data.data;
+                    console.log(response.data.data);
+                    console.log(this.MYGLOBAL.url+"this.MYGLOBAL.url---");
+                }).catch(function (error) {
+                    console.log("请设备列表求失败:"+error);
+                });
+            },
             handleEdit(index, row) {
                 console.log(index, row);
             },
