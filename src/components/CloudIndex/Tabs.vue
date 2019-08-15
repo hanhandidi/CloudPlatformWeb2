@@ -77,7 +77,7 @@
                     return
                 }*/
                 this.$store.commit('delete_tabs', route);
-                if (this.activeIndex === targetName) {
+                if (this.activeIndex === route) {
                     // 设置当前激活的路由
                     if (this.openTab && this.openTab.length >= 1) {
                         //console.log('=============', this.openTab[this.openTab.length - 1].route)

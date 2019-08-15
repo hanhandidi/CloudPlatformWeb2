@@ -85,7 +85,7 @@ const router = new Router({
                 {
                     //添加设备
                     path: "addDevice",
-                    name:'添加设备',
+                    title:'添加设备',
                     component: DeviceAdd
                 },
                 {

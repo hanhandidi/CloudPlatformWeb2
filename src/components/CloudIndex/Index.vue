@@ -10,7 +10,7 @@
                 <div id="bad"></div>
             </el-col>
             <el-col :span="6">
-                <div id="run"></div>
+                <div id="close"></div>
             </el-col>
             <el-col :span="6">
                 <div id="all"></div>
@@ -28,27 +28,18 @@
 </template>
 <script>
     export default {
-        name: '',
         data() {
             return {
-                open:0,
-                openData:[{
-                    name:""
-                }],
-                charts: '',
+                //存储设备信息
+                deviceData:[],
                 orderType: ['未接单', '已接单', '已拒单', '生产中', '已完成'],
-                orderData: [
-                    {value: 335, name: '未接单'},
-                    {value: 310, name: '已接单'},
-                    {value: 234, name: '已拒单'},
-                    {value: 135, name: '生产中'},
-                    {value: 1548, name: '已完成'}
-                ],
+                orderData: [],
             }
         },
         methods: {
+            //画饼图
             drawPie(id) {
-                this.charts = this.$echarts.init(document.getElementById(id))
+                let charts = this.$echarts.init(document.getElementById(id))
                 let option = {
                     title: {
                         text: "工厂订单信息",
@@ -97,10 +88,11 @@
                         }
                     ]
                 }
-                this.charts.setOption(option)
+                charts.setOption(option)
             },
+            //画柱状图
             drawBar(id) {
-                this.charts = this.$echarts.init(document.getElementById(id))
+                let charts = this.$echarts.init(document.getElementById(id))
                 let option = {
                     title: {
                         text: "每月订单数量",
@@ -142,45 +134,101 @@
                     xAxis: [
                         {
                             type: "category",
-                            data: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+                            data: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+                            axisLabel: {
+                                show: true,
+                                textStyle: {
+                                    color: "rgb(229, 229, 229)"
+                                }
+                            }
                         }
                     ],
                     yAxis: [
                         {
-                            type: "value"
+                            type: "value",
+                            axisLabel: {
+                                show: true,
+                                textStyle: {
+                                    color: "rgb(229, 229, 229)"
+                                }
+                            }
                         }
                     ],
                     series: [
                         {
                             name: "订单数",
                             type: "bar",
-                            data: [200, 300, 400, 100, 236, 598, 777, 555, 655, 126, 111, 60]
+                            data: [200, 300, 400, 100, 236, 598, 777, 555, 655, 126, 111, 60],
+                            itemStyle: {
+                                normal: {
+                                    //每根柱子颜色设置
+                                    color: function(params) {
+                                        let colorList = [
+                                            "#c23531",
+                                            "#2f4554",
+                                            "#61a0a8",
+                                            "#d48265",
+                                            "#91c7ae",
+                                            "#749f83",
+                                            "#ca8622",
+                                            "#bda29a",
+                                            "#6e7074",
+                                            "#546570",
+                                            "#c4ccd3",
+                                            "#4BABDE",
+                                            "#FFDE76",
+                                            "#E43C59",
+                                            "#37A2DA"
+                                        ];
+                                        return colorList[params.dataIndex];
+                                    }
+                                }
+                            },
+                            //柱状图上显示数据
+                            label: {
+                                show: "true",
+                                position: "top",
+                                color: "#FFF",
+                                fontWeight: "bolder",
+                                backgroundColor: "auto",
+                                fontSize: "20"
+                            },
                         }
                     ]
                 }
-                this.charts.setOption(option)
+
+                charts.setOption(option)
             },
-            drawGauge(id) {
-                this.charts = this.$echarts.init(document.getElementById(id));
-                let open =this.open
+            //画仪表盘
+            drawGauge(id,i) {
+                let charts = this.$echarts.init(document.getElementById(id));
                 let option = {
                     series: [
                         {
                             type: "gauge",
                             name: "数据",
-                            data: [
-                                {
-                                    value: open,
-                                    name: "开机率"
-                                }
-                            ],
+                            data: [this.deviceData[i]],
                             axisLine: {
                                 lineStyle: {
-                                    color: [[0.2, "rgb(137, 37, 34)"], [0.4, "rgb(255, 69, 0)"], [0.8, "rgb(0, 127, 63)"], [1, "rgb(0, 127, 255)"]]
-                                }
+                                    color: [[0.2, "rgb(137, 37, 34)"], [0.4, "rgb(255, 69, 0)"], [0.8, "rgb(0, 127, 63)"], [1, "rgb(0, 127, 255)"]],
+                                    width: 20,
+                                    shadowColor: "rgb(34, 34, 34)",
+                                    shadowBlur: 12,
+                                    shadowOffsetX: 3,
+                                    shadowOffsetY: 3
+                                },
+                                show:true
                             },
+                            pointer: {
+                                length: "50%",
+                                width: 8
+                            },
+                            center: ["50%", "50%"],
                             detail: {
-                                formatter: "{value}%"
+                                formatter: `${this.deviceData[i].value}%`
+                            },
+                            title: {
+                                show: false
                             }
                         }
                     ],
@@ -188,10 +236,10 @@
                         formatter: "{a} <br>{b} : {c}%"
                     },
                     title: {
-                        x: "center",
+                        x: "left",
                         y: "top",
-                        textAlign: "center",
-                        text: "开机率",
+                        textAlign: "left",
+                        text: this.deviceData[i].name,
                         textStyle: {
                             color: "rgb(255, 255, 255)",
                             fontSize: 16
@@ -199,46 +247,117 @@
                     }
                 }
 
-                this.charts.setOption(option);
+                charts.setOption(option);
 
             },
-
-            Selectdevice() {
-                console.log("进来了！！！！！")
+            //查询设备
+            selectDevice() {
+                //console.log("进来了！！！！！")
                 this.$ajax.post('/equipment/getAll', {
                     factoryId: 1
                 }).then(res => {
-                    let count = 0;
+                    let openCount=0
+                    let closeCount=0
+                    let badCount=0
                     let device = res.data.data
-                    console.log("device", device)
                     let all = device.length
-                    console.log("all", all)
                     for (let i = 0; i < all; i++) {
-                        if (device[i].equipmentStatus === 10) {
-                            count++;
+                        if (device[i].equipmentStatus === 10) {//启用
+                            openCount++;
+                        }else if(device[i].equipmentStatus === 20){//停用
+                            closeCount++;
+                        }else if(device[i].equipmentStatus === 30){//故障
+                            badCount++
                         }
                     }
-                    console.log("count",count)
-                    let open = parseFloat(count) / all
-                        this.open=open.toFixed(2)*100;
-                    console.log("open",open)
-                }).catch(res=>{console.log("cuowu")})
+                   // console.log("openCount",openCount)
+                    //console.log("closeCount",closeCount)
+                    //console.log("badCount",badCount)
+                    let openPercent = parseFloat(openCount) / all
+                    let closePercent = parseFloat(closeCount) / all
+                    let badPercent = parseFloat(badCount) / all
+                    let allPercent =  Math.floor(Math.random()*40)+60;
+                    let a = {value:openPercent.toFixed(2)*100,name:'开机率'}
+                    let b = {value:closePercent.toFixed(2)*100,name:'停机率'}
+                    let c = {value:badPercent.toFixed(2)*100,name:'故障率'}
+                    let d = {value:allPercent,name:'综合效率'}
+                    this.deviceData.push(a);
+                    this.deviceData.push(b);
+                    this.deviceData.push(c);
+                    this.deviceData.push(d);
+                    //console.log(this.deviceData)
+                    this.drawGauge('open',0)
+                    this.drawGauge('close',1)
+                    this.drawGauge('bad',2)
+                    this.drawGauge('all',3)
+                }).catch(()=>{console.log("cuowu")})
+            },
+            //查询订单
+            selectOrder(){
+                this.$ajax.post('/productOrder/getAll',{
+                    factoryId: 1
+                }).then(res=>{
+                    let Order = res.data.data
+                    console.log("Order",Order)
+                    let unreceived=0,received=0,refused=0,product=0,completed=0
+                    for (let i = 0; i < Order.length; i++) {
+                       switch (Order[i].orderStatus) {
+                           case 10:
+                               unreceived++;//未接单数量
+                               break;
+                           case 20:
+                               received++;//已接单数量
+                               break;
+                           case 30:
+                               refused++;//已拒单数量
+                               break;
+                           case 40:
+                               product++;//生产中数量
+                               break;
+                           case 50:
+                               completed++;//已完成数量
+                               break;
+                       }
+                    }
+                    console.log("unreceived="+unreceived,"received="+received,
+                        "refused="+refused,"product="+product,"completed="+completed)
+                    let a = [
+                        {
+                            value:unreceived,
+                            name:"未接单"
+                        },
+                        {
+                            value:received,
+                            name:"已接单"
+                        },
+                        {
+                            value:refused,
+                            name:"已拒单"
+                        },
+                        {
+                            value:product,
+                            name:"生产中"
+                        },
+                        {
+                            value:completed,
+                            name:"已完成"
+                        }
+                    ]
+                    this.orderData = a;
+                    this.drawPie('orderPie')
+                })
             }
         },
         created(){
-            this.Selectdevice();
+            this.selectDevice();
+            this.selectOrder();
         },
         //调用
         mounted() {
             this.$nextTick(function () {
-                this.drawPie('orderPie')
                 this.drawBar('orderBar')
-                this.drawGauge('open')
-                this.drawGauge('run')
-                this.drawGauge('bad')
-                this.drawGauge('all')
+                this.draw()
             })
-
         }
     }
 </script>
@@ -277,7 +396,7 @@
         margin: 0 auto 20px auto;
     }
 
-    #bad, #run, #open, #all {
+    #bad, #close, #open, #all {
         width: 300px;
         height: 300px;
         margin: 0 auto;
