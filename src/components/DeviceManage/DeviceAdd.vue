@@ -104,7 +104,6 @@
                 factoryId:1
             }).then(response=>{
                 this.products = response.data.data;
-                console.log(response.data.code+"---"+this.products+this.MYGLOBAL.url);
             }).catch(function (error) {
                 console.log(error);
             });
@@ -115,12 +114,16 @@
                     if (valid) {
                         this.$ajax.post("/equipment/addVO",this.equipment).then(response=>{
                             let code = response.data.code;
-                            console.log("添加结果："+code);
-                            this.$message({
-                                message: '设备录入成功',
-                                type: 'success'
-                            });
-                            this.resetForm();
+                            let message=response.data.message;
+                            if(code===200){
+                                this.$message({
+                                    message: '设备录入成功',
+                                    type: 'success'
+                                });
+                                this.resetForm();
+                            }else {
+                                this.$message.error(message);
+                            }
                         }).catch(function (error) {
                             this.$message.error('添加失败');
                             console.log("添加失败："+error);

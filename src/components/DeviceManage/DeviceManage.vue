@@ -20,39 +20,39 @@
         <el-table stripe border :data="equipments" style="width: 100%">
             <el-table-column align="center" label="设备序号" width="180">
                 <template slot-scope="scope">
-                    <span>{{ scope.row.seq }}</span>
+                    <span>{{ scope.row.equipmentSeq }}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="设备名称" width="180">
                 <template slot-scope="scope">
-                    <span >{{ scope.row.name }}</span>
+                    <span >{{ scope.row.equipmentName }}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="设备图片" width="180">
                 <template slot-scope="scope">
-                    <span >{{ scope.row.imgUrl }}</span>
+                    <img :src="contact(scope.row.equipmentImgUrl)" alt="暂无图片" class="image">
                 </template>
             </el-table-column>
             <el-table-column align="center" label="可生产产品" width="180">
                 <template slot-scope="scope">
-                    <span v-for="(item,index) in scope.row.productName" :key='index'>
-                        {{ item }}&nbsp; </span>
+                    <span v-for="(item,index) in scope.row.tEquipmentProducts" :key='index'>
+                        {{ item.tProduct.productName }}&nbsp; </span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="设备状态" width="135">
                 <template slot-scope="scope">
                     <el-tag
-                            :type="showType(scope.row.status)"
-                            disable-transitions>{{showText(scope.row.status)}}</el-tag>
+                            :type="showType(scope.row.equipmentStatus)"
+                            disable-transitions>{{showText(scope.row.equipmentStatus)}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="创建时间" width="180">
                 <template slot-scope="scope">
                     <i class="el-icon-time"></i>
-                    <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.createTime | DateFormat }}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="创建人" width="130">
+           <!-- <el-table-column align="center" label="创建人" width="130">
                 <template slot-scope="scope">
                     <el-popover trigger="hover" placement="top">
                         <p>姓名: {{ scope.row.createUserName }}</p>
@@ -62,15 +62,14 @@
                         </div>
                     </el-popover>
                 </template>
-            </el-table-column>
-
+            </el-table-column>-->
             <el-table-column align="center" label="上次修改时间" width="180">
                 <template slot-scope="scope">
                     <i class="el-icon-time"></i>
-                    <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.updateTime | DateFormat }}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="修改人" width="130">
+           <!-- <el-table-column align="center" label="修改人" width="130">
                 <template slot-scope="scope">
                     <el-popover trigger="hover" placement="top">
                         <p>姓名: {{ scope.row.updateUserName }}</p>
@@ -80,7 +79,7 @@
                         </div>
                     </el-popover>
                 </template>
-            </el-table-column>
+            </el-table-column>-->
             <el-table-column align="center" label="有效标识" width="135">
                 <template slot-scope="scope">
                     <el-tag
@@ -107,71 +106,26 @@
         name: "DeviceManage",
         data() {
             return {
-                equipments: [{
-                    seq: 'DX3602',
-                    name: '喷水式平织机',
-                    imgUrl: '暂无图片',
-                    status: '10',
-                    flag: 1,
-                    productName:[
-                      "403型号钢管",
-                      "无碳钢板",
-                    ],
-                    createTime: '2016-05-02',
-                    createUserName:'周全',
-                    updateTime: '2016-05-02',
-                    updateUserName:'连文凯',
-                }, {
-                    seq: 'DX3785',
-                    name: '双冷源新风除湿机',
-                    imgUrl: '暂无图片',
-                    status: '20',
-                    flag: 0,
-                    productName:[
-                        "403型号钢管",
-                        "无碳钢板",
-                    ],
-                    createTime: '2016-05-02',
-                    createUserName:'周全',
-                    updateTime: '2016-05-02',
-                    updateUserName:'连文凯',
-                }, {
-                    seq: 'SG5613',
-                    name: '金属切削机床',
-                    imgUrl: '暂无图片',
-                    status: '10',
-                    flag: 1,
-                    productName:[
-                        "403型号钢管",
-                        "无碳钢板",
-                    ],
-                    createTime: '2016-05-02',
-                    createUserName:'周全',
-                    updateTime: '2016-05-02',
-                    updateUserName:'连文凯',
-                }, {
-                    seq: 'FH0236',
-                    name: '自动化仪表',
-                    imgUrl: '暂无图片',
-                    status: '30',
-                    flag: 0,
-                    productName:[
-                        "403型号钢管",
-                        "无碳钢板",
-                    ],
-                    createTime: '2016-05-02',
-                    createUserName:'周全',
-                    updateTime: '2016-05-02',
-                    updateUserName:'连文凯',
-                }],
+                equipments: [{}],
                 formInline: {
                     user: '',
                     region: ''
                 }
             }
         },
+        created(){
+            console.log("一次")
+            this.$ajax.post("/equipment/getAll",{
+                factoryId:1
+            }).then(response=>{
+                this.equipments = response.data.data;
+                console.log(this.MYGLOBAL.url+"this.MYGLOBAL.url---"+this.equipments);
+            }).catch(function (error) {
+                console.log("请设备列表求失败:"+error);
+            });
+        },
         methods: {
-            handleEdit(index, row) {
+            handleEdit(index, row) {  //编辑设备
                 console.log(index, row);
                 this.$router.push({
                     name:"updateDevice",
@@ -180,29 +134,56 @@
                     }
                 });
             },
+            contact(pic){  //拼接图片路径
+                let url=this.MYGLOBAL.url+"/"+pic;
+                return url;
+            },
             handleDelete(index, row) {
-                console.log(index, row);
+                this.$ajax.delete("/equipment/delete/"+row.id).then(response=>{
+                    console.log(response.data);
+                    let code = response.data.code;
+                    let message=response.data.message;
+                    if(code===200){
+                        this.$message({
+                            message: message,
+                            type: 'success'
+                        });
+                        this.equipments.splice(index,1);
+                    }else {
+                        this.$message.error(message);
+                    }
+                }).catch(function (error) {
+                    console.log("请设备列表求失败:"+error);
+                });
+
             },
             onSubmit() {
                 console.log('submit!');
             },
-            showType(type){
-                if(type==='10'){
+            showType(type){  //设置设备不同状态不同的风格
+                if(type===10){
                     return 'success';
-                }else if(type==='20'){
+                }else if(type===20){
                     return 'info';
                 }else {
                     return 'danger';
                 }
             },
-            showText(text){
-                if(text==='10'){
+            showText(text){  //将设备不同状态由数字转为文字
+                if(text===10){
                     return '启用';
-                }else if(text==='20'){
+                }else if(text===20){
                     return '停用';
                 }else {
                     return '故障';
                 }
+            },
+
+        },
+        filters:{
+            DateFormat: function (timeStamp) {
+                let temp=timeStamp.substr(0,10);
+                return temp;
             }
         }
 
@@ -216,5 +197,9 @@
         margin-left: 18%;
         margin-bottom: 20px;
 
+    }
+    .image{
+        height: 80px;
+        width: 80px;
     }
 </style>
