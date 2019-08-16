@@ -33,10 +33,14 @@
         },
         methods: {
             login() {
+                this.$message.closeAll();
                 this.$ajax({
                     method: 'post',
                     url: this.userLoginApi,
-                    data: 'userId=' + this.userId + '&userPassword=' + this.userPassword
+                    data: this.qs.stringify({
+                        id: this.userId,
+                        userPasswd: this.userPassword
+                    })
                 }).then((response) => {
                     console.log(response.data);
                     // 获取用户信息，登录成功
@@ -50,7 +54,7 @@
                     }
                     console.log(response.data.data)
                 }).catch((error) => {
-                    this.$message.error('登录失败，请检查账号或密码!');
+                    this.$message.error('网络开小差了>.<');
                     console.log(error)
                 })
             }

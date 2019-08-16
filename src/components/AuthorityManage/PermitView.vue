@@ -1,72 +1,67 @@
 <template>
-    <div class="main_con">
-        <div class="con_title">
-            <p class="title1">销售人员</p>
-            <p class="title2">销售人员拥有部分非安全性角色</p>
-        </div>
-        <div class="con_warp">
-            <div class="warp_box">
-                <div class="box_title">
-                    <span>订单管理</span>
-                </div>
-                <div class="box_cont">
-                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">
-                        全选
-                    </el-checkbox>
-                    <div style="margin-top: 15px"></div>
-                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                        <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-                    </el-checkbox-group>
-                </div>
-            </div>
-        </div>
-        <div class="con_warp">
-            <div class="warp_box">
-                <div class="box_title">
-                    <span>订单管理</span>
-                </div>
-                <div class="box_cont">
-                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">
-                        全选
-                    </el-checkbox>
-                    <div style="margin-top: 15px"></div>
-                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                        <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-                    </el-checkbox-group>
-                </div>
-            </div>
-        </div>
-        <div class="con_warp">
-            <div class="warp_box">
-                <div class="box_title">
-                    <span>订单管理</span>
-                </div>
-                <div class="box_cont">
-                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">
-                        全选
-                    </el-checkbox>
-                    <div style="margin-top: 15px"></div>
-                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                        <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-                    </el-checkbox-group>
-                </div>
-            </div>
-        </div>
-        <div class="con_warp">
-            <div class="warp_box">
-                <div class="box_title">
-                    <span>订单管理</span>
-                </div>
-                <div class="box_cont">
-                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">
-                        全选
-                    </el-checkbox>
-                    <div style="margin-top: 15px"></div>
-                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                        <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-                    </el-checkbox-group>
-                </div>
-            </div>
+    <div>
+<!--        <div class="box_title">-->
+<!--            <span>权限列表</span>-->
+<!--        </div>-->
+        <div>
+            <template>
+                <!-- id 权限名 权限图标 权限状态 权限路径 父id-->
+                <el-table
+                        :data="permitList"
+                        border
+                        with="100%"
+                        size="medium">
+                    <el-table-column
+                            label="#ID"
+                            width="100">
+                        <template slot-scope="scope">
+                            <span style="margin-left: 10px">{{ scope.row.id }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="权限名"
+                            width="180">
+                        <template slot-scope="scope">
+                            <el-tooltip class="item" effect="dark" :content=scope.row.roleDesc
+                                        placement="top-start">
+                                <span style="margin-left: 10px">{{ scope.row.permitName }}</span>
+                            </el-tooltip>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="权限图标"
+                            width="100">
+                        <template slot-scope="scope" style="margin-left: 10px">
+                            <i :class="scope.row.permitIcon" style="margin-left: 15px"></i>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="权限状态"
+                            width="100">
+                        <template slot-scope="scope">
+                            <el-tag :type="scope.row.status === 0 ? 'success' : 'warning'"
+                                    disable-transitions>{{scope.row.status === 0 ? '正常' : '无效'}}
+                            </el-tag>
+                        </template>
+                    </el-table-column>
+<!--                    <el-table-column-->
+<!--                            label="权限路径"-->
+<!--                            width="180">-->
+<!--                        <template slot-scope="scope">-->
+<!--                            <span style="margin-left: 10px">{{ scope.row.permitPath}}</span>-->
+<!--                        </template>-->
+<!--                    </el-table-column>-->
+                    <el-table-column
+                            label="父权限"
+                            width="100">
+                        <template slot-scope="scope">
+                            <el-tag :type="scope.row.parentId === 0 ? 'primary' : 'info'"
+                                    disable-transitions>{{scope.row.parentId === 0 ? '父级权限' : scope.row.parentId}}
+                            </el-tag>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </template>
         </div>
     </div>
 </template>
@@ -76,48 +71,29 @@
         name: "PermitView",
         data() {
             return {
-                checkAll: false,
-                checkedCities: [],
-                cities: ['查看订单', '编辑订单'],
-                isIndeterminate: true
-            };
+                permitAPI: "http://localhost/permit/list",
+                permitList: []
+            }
         },
         methods: {
-            handleCheckAllChange(val) {
-                this.checkedCities = val ? this.cities : [];
-                this.isIndeterminate = false;
-            },
-            handleCheckedCitiesChange(value) {
-                let checkedCount = value.length;
-                this.checkAll = checkedCount === this.cities.length;
-                this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+            getPermitList() {
+                this.$ajax({
+                    method: 'post',
+                    url: this.permitAPI
+                }).then((response) => {
+                    this.permitList = response.data.data
+                }).catch((error) => {
+                    this.$message.error('网络出错！');
+                    console.log(error)
+                })
             }
+        },
+        mounted() {
+            this.getPermitList();
         }
     }
 </script>
 
 <style scoped>
-    .main_con {
-        padding: 10px;
-    }
-
-    .con_title .title1 {
-        font-size: 18px;
-    }
-
-    .con_title .title2 {
-        margin-top: 3px;
-        font-size: 12px;
-    }
-
-    .box_title {
-        font-size: 15px;
-        margin-top: 30px;
-    }
-
-    .box_cont {
-        margin-left: 20px;
-        margin-top: 40px;
-    }
 
 </style>

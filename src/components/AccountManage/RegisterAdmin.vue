@@ -72,7 +72,7 @@
         name: "RegisterAdmin",
         data() {
             return {
-                userUpdateApi: 'http://localhost/user/update',
+                userUpdateApi: 'http://localhost/user',
                 user: {
                     id: global.userId,
                     createUserid: global.userId,
@@ -83,7 +83,8 @@
                     userJobNum: '',
                     userPhoneNum: '',
                     userEmail: '',
-                    roleId: 99999,
+                    userStatus: 0,
+                    roleId: 0,
                     factoryId: global.factoryId
                 }
             }
@@ -124,14 +125,14 @@
                 }
                 // 开始网络交互
                 this.$ajax({
-                    method: 'post',
+                    method: 'put',
                     url: this.userUpdateApi,
-                    data: this.user
+                    params: this.user
                 }).then((response) => {
                     if (response.data.code === 201) {
                         this.$message.error('用户名称已存在');
                     } else {
-                        console.log(response.data.data);
+                        console.log(response.data);
                         global.userName = response.data.data.userName;
                         this.$router.push({
                             path: `/register/3`

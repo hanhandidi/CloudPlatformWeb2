@@ -15,15 +15,14 @@
                 </div>
                 <div class="box_warp">
                     <template>
-                        <el-tabs tab-position="left" style="height: 100%">
-                            <el-tab-pane disabled="true" label="配置管理">配置管理</el-tab-pane>
-                            <el-tab-pane label="用户管理"><PermitView></PermitView></el-tab-pane>
-                            <el-tab-pane label="配置管理"><PermitView></PermitView></el-tab-pane>
-                            <el-tab-pane label="角色管理"><PermitView></PermitView></el-tab-pane>
-                            <el-tab-pane label="客户"><PermitView></PermitView></el-tab-pane>
+                        <el-tabs tab-position="left" style="height: 100%" v-model="roleId">
+                            <el-tab-pane disabled label="配置管理">配置管理</el-tab-pane>
+                            <el-tab-pane :name="role.id.toString()" :label="role.roleName" v-for="role in roleList"
+                                         :key="role.id">
+                                <permit-view :role-id="role.id"></permit-view>
+                            </el-tab-pane>
                         </el-tabs>
                     </template>
-
                 </div>
             </div>
 
@@ -32,23 +31,52 @@
 </template>
 
 <script>
-    import PermitView from "./PermitView";
+    import PermitView from "./PermitEdit";
+    import global from "../../router/global";
+
     export default {
         name: "PermitManage",
-        components: {PermitView}
+        components: {PermitView},
+        data() {
+            return {
+                roleListAPI: 'http://localhost/role/list',
+                roleList: [],
+                roleId: '' //String
+            }
+        },
+        mounted() {
+            this.getRoleList();
+        },
+        methods: {
+            getRoleList() {
+                this.$ajax({
+                    method: 'get',
+                    url: this.roleListAPI,
+                    params: {factoryId: global.factoryId}
+                }).then((response) => {
+                    console.log(response.data);
+                    this.roleList = response.data.data;
+                    this.roleId = this.roleList[0].id.toString();
+                }).catch((error) => {
+                    this.$message.error('网络出错！');
+                    console.log(error)
+                })
+            }
+        }
     }
 </script>
 
 <style scoped>
 
-    .article >>>  .el-tabs--left .el-tabs__item.is-left {
+    .article >>> .el-tabs--left .el-tabs__item.is-left {
         text-align: left;
         padding-left: 50px;
+        padding-right: 50px;
     }
 
-    .article >>>  .el-tabs__item.is-disabled {
+    .article >>> .el-tabs__item.is-disabled {
         text-align: left;
-        padding-left: 20px!important;
+        padding-left: 20px !important;
     }
 
 

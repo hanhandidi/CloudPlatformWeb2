@@ -13,7 +13,7 @@
                 <el-col :span="18">
                     <div class="content_box">
                         <div class="box_title">
-                            <div style="background: #3e3f41;height: 12px;width: 3px;display: inline-block"></div>&nbsp;<span>权限列表</span>
+                            <div style="background: #3e3f41;height: 12px;width: 3px;display: inline-block"></div>&nbsp;<span>角色列表</span>
                         </div>
                         <div class="box_warp">
                             <template>
@@ -32,7 +32,7 @@
                                     </el-table-column>
                                     <el-table-column
                                             label="角色名"
-                                            width="180">
+                                            width="120">
                                         <template slot-scope="scope">
                                             <el-tooltip class="item" effect="dark" :content=scope.row.roleDesc
                                                         placement="top-start">
@@ -41,40 +41,52 @@
                                         </template>
                                     </el-table-column>
                                     <el-table-column
-                                            label="创建人"
+                                            label="角色状态"
                                             width="100">
                                         <template slot-scope="scope">
-                                            <i class="el-icon-user"></i>
-                                            <span style="margin-left: 10px">{{ scope.row.createUserid }}</span>
+                                            <el-tag :type="scope.row.roleStatus === 0 ? 'success' : 'danger'"
+                                                    size="small"
+                                                    disable-transitions>{{scope.row.roleStatus === 0 ? '正常' : '无效'}}
+                                            </el-tag>
                                         </template>
                                     </el-table-column>
+                                    <!--                                    <el-table-column-->
+                                    <!--                                            label="创建人"-->
+                                    <!--                                            width="100">-->
+                                    <!--                                        <template slot-scope="scope">-->
+                                    <!--                                            <i class="el-icon-user"></i>-->
+                                    <!--                                            <span style="margin-left: 10px">{{ scope.row.createUserid }}</span>-->
+                                    <!--                                        </template>-->
+                                    <!--                                    </el-table-column>-->
                                     <el-table-column
                                             label="创建时间"
-                                            width="120">
+                                            width="200">
                                         <template slot-scope="scope">
-                                            <span style="margin-left: 10px">{{ scope.row.createTime.split(' ')[0]  }}</span>
+                                            <i class="el-icon-time"></i>
+                                            <span style="margin-left: 10px">{{ scope.row.createTime}}</span>
                                         </template>
                                     </el-table-column>
-                                    <el-table-column
-                                            label="修改人"
-                                            width="100">
-                                        <template slot-scope="scope">
-                                            <i class="el-icon-user"></i>
-                                            <span style="margin-left: 10px">{{ scope.row.updateUserid }}</span>
-                                        </template>
-                                    </el-table-column>
+                                    <!--                                    <el-table-column-->
+                                    <!--                                            label="修改人"-->
+                                    <!--                                            width="100">-->
+                                    <!--                                        <template slot-scope="scope">-->
+                                    <!--                                            <i class="el-icon-user"></i>-->
+                                    <!--                                            <span style="margin-left: 10px">{{ scope.row.updateUserid }}</span>-->
+                                    <!--                                        </template>-->
+                                    <!--                                    </el-table-column>-->
                                     <el-table-column
                                             label="修改时间"
-                                            width="120">
+                                            width="200">
                                         <template slot-scope="scope">
-                                            <span style="margin-left: 10px">{{ scope.row.updateTime.split(' ')[0] }}</span>
+                                            <i class="el-icon-time"></i>
+                                            <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
                                         </template>
                                     </el-table-column>
                                     <el-table-column label="操作">
                                         <template slot-scope="scope">
                                             <el-button
                                                     size="mini"
-                                                    @click="handleRole(false, scope.$index)">编辑
+                                                    @click="handleRole(false, scope.$index)">修改
                                             </el-button>
                                             <el-button
                                                     size="mini"
@@ -105,7 +117,7 @@
                 <el-col :span="6">
                     <div class="content_box">
                         <div class="box_title">
-                            <span>权限列表</span>
+                            <span>角色操作记录</span>
                         </div>
                         <div class="box_warp">
                             <!--                            <el-radio-group v-model="reverse">-->
@@ -145,6 +157,7 @@
         data() {
             return {
                 roleAPI: 'http://localhost/role',
+                roleListAPI: 'http://localhost/role/list',
                 roleList: [],
                 reverse: false,
                 drawer: false,
@@ -196,13 +209,13 @@
                 this.drawerIsAdd = isAdd;
             },
             handleCreateResult(data) {
-                console.log(data);
-                this.drawer = data
+                this.drawer = data;
+                this.getRoleList();
             },
             getRoleList() {
                 this.$ajax({
                     method: 'get',
-                    url: this.roleAPI,
+                    url: this.roleListAPI,
                     params: {factoryId: global.factoryId}
                 }).then((response) => {
                     console.log(response.data);
