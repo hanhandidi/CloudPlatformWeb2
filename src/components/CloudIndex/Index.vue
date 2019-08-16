@@ -34,6 +34,7 @@
                 deviceData:[],
                 orderType: ['未接单', '已接单', '已拒单', '生产中', '已完成'],
                 //订单饼图数据
+
                 orderData: [],
                 //订单柱状图数据
                 orderBarData:[]
