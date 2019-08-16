@@ -33,7 +33,10 @@
                 //存储设备信息
                 deviceData:[],
                 orderType: ['未接单', '已接单', '已拒单', '生产中', '已完成'],
+                //订单饼图数据
                 orderData: [],
+                //订单柱状图数据
+                orderBarData:[]
             }
         },
         methods: {
@@ -95,7 +98,7 @@
                 let charts = this.$echarts.init(document.getElementById(id))
                 let option = {
                     title: {
-                        text: "每月订单数量",
+                        text: "订单状态汇总",
                         textStyle: {
                             color: "rgb(255, 255, 255)"
                         }
@@ -134,7 +137,7 @@
                     xAxis: [
                         {
                             type: "category",
-                            data: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+                            data: this.orderType,
                             axisLabel: {
                                 show: true,
                                 textStyle: {
@@ -158,7 +161,8 @@
                         {
                             name: "订单数",
                             type: "bar",
-                            data: [200, 300, 400, 100, 236, 598, 777, 555, 655, 126, 111, 60],
+                            //data: [200, 300, 400, 100, 236],
+                            data: this.orderBarData,
                             itemStyle: {
                                 normal: {
                                     //每根柱子颜色设置
@@ -168,17 +172,7 @@
                                             "#2f4554",
                                             "#61a0a8",
                                             "#d48265",
-                                            "#91c7ae",
-                                            "#749f83",
-                                            "#ca8622",
-                                            "#bda29a",
-                                            "#6e7074",
-                                            "#546570",
-                                            "#c4ccd3",
-                                            "#4BABDE",
-                                            "#FFDE76",
-                                            "#E43C59",
-                                            "#37A2DA"
+                                            "#76546d"
                                         ];
                                         return colorList[params.dataIndex];
                                     }
@@ -321,30 +315,31 @@
                     }
                     console.log("unreceived="+unreceived,"received="+received,
                         "refused="+refused,"product="+product,"completed="+completed)
-                    let a = [
+                    this.orderData = [
                         {
-                            value:unreceived,
-                            name:"未接单"
+                            value: unreceived,
+                            name: "未接单"
                         },
                         {
-                            value:received,
-                            name:"已接单"
+                            value: received,
+                            name: "已接单"
                         },
                         {
-                            value:refused,
-                            name:"已拒单"
+                            value: refused,
+                            name: "已拒单"
                         },
                         {
-                            value:product,
-                            name:"生产中"
+                            value: product,
+                            name: "生产中"
                         },
                         {
-                            value:completed,
-                            name:"已完成"
+                            value: completed,
+                            name: "已完成"
                         }
-                    ]
-                    this.orderData = a;
+                    ];
+                    this.orderBarData = [unreceived,received,refused,product,completed]
                     this.drawPie('orderPie')
+                    this.drawBar('orderBar')
                 })
             }
         },
@@ -354,10 +349,6 @@
         },
         //调用
         mounted() {
-            this.$nextTick(function () {
-                this.drawBar('orderBar')
-                this.draw()
-            })
         }
     }
 </script>
