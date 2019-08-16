@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="position">
-                <el-collapse v-model="activeNames" @change="handleChange">
+                <el-collapse v-model="activeNames">
                     <el-collapse-item name="1">
                         <template slot="title">
                             <span class="zhouFont">订单基本信息</span>
@@ -9,15 +9,15 @@
                         <table class="zhouTable">
                             <tr>
                                 <td>订单编号：{{order.orderSeq}}</td>
-                                <td>订单来源：{{order.orderSource}}</td>
-                                <td>产品名称：{{order.productName}}</td>
-                                <td>订单状态：{{order.orderStatus}}</td>
+                                <td>订单来源：线下订单</td>
+                                <td>产品名称：{{order.tProduct.productName}}</td>
+                                <td>订单状态：{{showText(order.orderStatus)}}</td>
                             </tr>
                             <tr>
                                 <td>产品数量：{{order.productCount}}</td>
                                 <td>订单截止日期：{{order.endDate}}</td>
                                 <td>创建时间：{{order.createTime}}</td>
-                                <td>创建人：{{order.createUserName}}</td>
+                                <td>创建人编号：{{order.createUserid}}</td>
                             </tr>
                         </table>
                     </el-collapse-item>
@@ -27,8 +27,8 @@
                         </template>
                         <table class="zhouTable">
                             <tr>
-                                <td>接单时间：2019-08-02</td>
-                                <td>操作员：周全</td>
+                                <td>接单时间：{{acceptOrder(order.orderStatus)}}</td>
+                                <td>操作员编号：{{order.updateUserid}}</td>
                             </tr>
                         </table>
                     </el-collapse-item>
@@ -38,8 +38,8 @@
                         </template>
                         <table style="width: 50%;font-size: 15px">
                             <tr style="height: 85px">
-                                <td>拒单时间：2019-08-02</td>
-                                <td>操作员：周全</td>
+                                <td>拒单时间：{{refuseOrder(order.orderStatus)}}</td>
+                                <td>操作员编号：{{order.updateUserid}}</td>
                             </tr>
                             <tr style="height: 150px">
                                 <td colspan="2">
@@ -47,8 +47,8 @@
                                         拒绝理由：
                                     </div>
                                     <div style="float: left;width: 82%">
-                                <textarea class="zhouText" disabled="disabled" readonly="readonly">管理员审核不通过，307号钢材已经断货，该订单无法处理。
-                                </textarea>
+                                        <textarea class="zhouText" disabled="disabled" v-model="order.bak"
+                                                  readonly="readonly"></textarea>
                                     </div>
                                 </td>
                             </tr>
@@ -173,21 +173,7 @@
         data() {
             return {
                 activeNames: ['1'],
-                order: {
-                    orderSeq: "",
-                    orderSource: "",
-                    productName: "",
-                    productCount: 0,
-                    finishedCount: 0,
-                    endDate: "",
-                    orderStatus: 10,
-                    factoryYield: "",
-                    flag: 1,
-                    createTime: "",
-                    createUserName: "",
-                    updateTime: "",
-                    updateUserName: "",
-                },
+                order: {},
                 productPlan: {
                     planSeq: 'P2019086989',
                     orderSeq: 'O20190845452',
@@ -237,9 +223,43 @@
             }
         },
         methods: {
-            handleChange(val) {
-                console.log(val);
-            }
+            showText(text){
+                let result="已完成";
+                switch (text) {
+                    case 10:
+                        result = "待接单";
+                        break;
+                    case 20:
+                        result = "已接单";
+                        break;
+                    case 30:
+                        result = "已拒绝";
+                        break;
+                    case 40:
+                        result = "生产中";
+                        break;
+                    case 50:
+                        result = "已完成";
+                        break;
+                    default :
+                        break;
+                }
+                return result;
+            },
+            acceptOrder(val){
+              if(val===20){
+                  return this.order.updateTime;
+              }else {
+                  return "该状态下无法查看";
+              }
+            },
+            refuseOrder(val){
+                if(val===30){
+                    return this.order.updateTime;
+                }else {
+                    return "该状态下无法查看";
+                }
+            },
         }
     }
 </script>

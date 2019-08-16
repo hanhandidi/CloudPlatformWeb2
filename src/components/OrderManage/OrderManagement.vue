@@ -1,27 +1,23 @@
 <template>
     <div>
         <div class="position">
-            <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                <el-form-item label="关键字">
-                    <el-input v-model="formInline.user" ></el-input>
-                </el-form-item>
-                <el-form-item label="是否有效">
-                    <el-select v-model="formInline.region" placeholder="有效标志">
-                        <el-option label="有效" value="shanghai"></el-option>
-                        <el-option label="失效" value="beijing"></el-option>
+            <el-form :inline="true" class="demo-form-inline">
+                <el-form-item label="订单状态">
+                    <el-select v-model="orderStatus" @change="currentOpt" placeholder="状态查询">
+                        <el-option label="全部状态" value="5"></el-option>
+                        <el-option label="待接单" value="10"></el-option>
+                        <el-option label="已接单" value="20"></el-option>
+                        <el-option label="已拒绝" value="30"></el-option>
+                        <el-option label="生产中" value="40"></el-option>
+                        <el-option label="已完成" value="50"></el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" icon="el-icon-search" @click="onSubmit">查询</el-button>
-                </el-form-item>
+                </el-form-item>&emsp;&emsp;&emsp;
                 <el-form-item>
                     <el-button type="primary" icon="el-icon-circle-plus"
                     @click="dialogFormVisible = true">新建订单</el-button>
                 </el-form-item>
             </el-form>
         </div>
-
-
 
         <el-dialog title="新建订单" :visible.sync="dialogFormVisible">
             <el-form :model="order">
@@ -50,7 +46,6 @@
                 <el-button type="primary" @click="orderCreate">创 建</el-button>
             </div>
         </el-dialog>
-
 
         <el-table  border :data="productOrder" style="width: 100%;">
             <el-table-column align="center" label="订单编号" width="180">
@@ -132,12 +127,10 @@
             </el-table-column>
             <el-table-column align="center" label="操作" fixed="right" width="240">
                 <template slot-scope="scope">
-                    <el-button round type="primary" size="mini" v-if="scope.row.orderStatus===10">
-                        接单
-                    </el-button>
-                    <el-button type="warning" round size="mini" v-if="scope.row.orderStatus===10">
-                        拒单
-                    </el-button>
+                    <el-button round type="primary" size="mini" @click="handleAccept(scope.$index,scope.row)"
+                               v-if="scope.row.orderStatus===10">接单</el-button>
+                    <el-button type="warning" round size="mini" @click="handleRefuse(scope.$index,scope.row)"
+                               v-if="scope.row.orderStatus===10">拒单</el-button>
                     <el-button type="info" round  v-if="scope.row.orderStatus===20"
                                size="mini"  @click="handleChange(scope.$index,scope.row)">
                         转为生产计划
@@ -152,14 +145,17 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination
-                background
-                layout="prev, pager, next"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage"
-                :page-size="4"
-                :total="totalSize">
-        </el-pagination>
+        <div class="position">
+            <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-size="4"
+                    :total="totalSize">
+            </el-pagination>
+        </div>
+
     </div>
 </template>
 
@@ -169,10 +165,6 @@
         data() {
             return {
                 productOrder: [],
-                formInline: {
-                    user: '',
-                    region: ''
-                },
                 dialogFormVisible: false,
                 order: {
                     productId:"",
@@ -182,6 +174,8 @@
                     createUserid:2,
                     factoryId:1
                 },
+                orderStatus:"5",
+                refuseReason:"",
                 products:[],
                 formLabelWidth: '120px',
                 currentPage:1,
@@ -202,16 +196,49 @@
                 });
             },
             handleChange(index, row) { // 点击转为生产计划按钮触发
-                console.log("转为生产计划"+index, row);
                 this.$router.push({
-                    path:"addProductPlan",
-                    query:{
+                    name:"addProductPlan",
+                    params:{
                         order:row
                     }
                 });
             },
-            onSubmit() {
-                console.log('submit!');
+            handleRefuse(index,row){ //拒单操作
+                this.$prompt('请输入拒绝理由', '拒绝接单', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    inputPattern: /\S{5}/,
+                    inputErrorMessage: "理由不充分"
+                }).then(({ value }) => {
+                    this.$ajax.post("/productOrder/refuse/"+row.id,{
+                        bak:value
+                    }).then(response=>{
+                        let code = response.data.code;
+                        let message=response.data.message;
+                        if(code===200){
+                            this.getOrderList(this.currentPage);
+                        }else {
+                            this.$message.error(message);
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(() => {
+                });
+
+            },
+            handleAccept(index,row){  //接单操作
+                this.$ajax.post("/productOrder/accept/"+row.id).then(response=>{
+                    let code = response.data.code;
+                    let message=response.data.message;
+                    if(code===200){
+                        this.getOrderList(this.currentPage);
+                    }else {
+                        this.$message.error(message);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
             },
             orderCreate(){ //新建订单
                 this.order.endDate= this.changeDate(this.order.endDate);
@@ -236,7 +263,8 @@
                     console.log("添加失败："+error);
                 });
             },
-            handleCurrentChange(val) {  //当前页改变时请求数据
+            handleCurrentChange(val) {  //分页查询
+                this.currentPage=val;
                 this.getOrderList(val);
             },
             showStatus(type){
@@ -285,7 +313,7 @@
                 }
                 return result;
             },
-           changeDate(time){
+            changeDate(time){
                 let year=time.getFullYear();
                 let month=time.getMonth()+1;
                 let day=time.getDate();
@@ -299,22 +327,38 @@
                 this.$ajax.post("/product/list",{
                     factoryId:1
                 }).then(response=>{
-                    console.log(response.data.data);
                     this.products = response.data.data;
                 }).catch(function (error) {
                     console.log(error);
                 });
             },
             getOrderList(val){ //获取订单列表
-                this.$ajax.post("/productOrder/listPage/"+val,{
-                    factoryId:1
-                }).then(response=>{
-                    console.log(response.data.data);
-                    this.productOrder = response.data.data.list;
-                    this.totalSize=response.data.data.total;
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                let status=this.orderStatus;
+                if(status!=="5"){
+                    this.$ajax.post("/productOrder/listPage/"+val,{
+                        orderStatus:status,
+                        factoryId:1
+                    }).then(response=>{
+                        this.productOrder = response.data.data.list;
+                        this.totalSize=response.data.data.total;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }else {
+                    this.$ajax.post("/productOrder/listPage/"+val,{
+                        factoryId:1
+                    }).then(response=>{
+                        this.productOrder = response.data.data.list;
+                        this.totalSize=response.data.data.total;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }
+
+            },
+            currentOpt(status){ //根据状态查询
+                console.log(status);
+                this.getOrderList(1);
             }
         }
     }

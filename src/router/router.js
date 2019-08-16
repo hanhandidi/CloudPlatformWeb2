@@ -128,7 +128,7 @@ const router = new Router({
                 {
                     //添加生产计划
                     path:"addProductPlan",
-                    name:'添加生产计划',
+                    name:"addProductPlan",
                     component:CreatePlan
                 },
                 {
