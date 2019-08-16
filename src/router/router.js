@@ -152,6 +152,7 @@ const router = new Router({
                 {
                     //报工
                     path:"reportList",
+                    name:"reportList",
                     component:ReportList
                 },
                 {

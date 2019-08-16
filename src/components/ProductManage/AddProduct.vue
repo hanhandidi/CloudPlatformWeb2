@@ -4,7 +4,7 @@
                 <el-input v-model="porInfo.productName"></el-input>
             </el-form-item>
             <el-form-item label="产品图片">
-                <el-upload class="avatar-uploader" action="http://10.10.84.3:8088/upload" :show-file-list="false" :on-success="handleAvatarSuccess"
+                <el-upload class="avatar-uploader" action="http://10.10.84.8:8088/upload" :show-file-list="false" :on-success="handleAvatarSuccess"
                            :before-upload="beforeAvatarUpload">
                     <img v-if="porInfo.productImgUrl"
                          :src="`${this.MYGLOBAL.url}/${porInfo.productImgUrl}`" class="avatar">

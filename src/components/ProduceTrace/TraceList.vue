@@ -7,14 +7,13 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
     <div style="margin: 20px;">
         <div class="position">
             <el-form :inline="true" :model="queryInfo" class="demo-form-inline">
-                <el-form-item label="工单编号">
-                    <el-input v-model="queryInfo.equipmentSeq" ></el-input>
-                </el-form-item>
+
                 <el-form-item label="工单状态">
-                    <el-select style="width: 120px" v-model="queryInfo.scheduleStatus" placeholder="选择工单状态">
-                        <el-option value="未开始" :label="queryInfo.scheduleStatus">未开始</el-option>
-                        <el-option value="生产中" :label="queryInfo.scheduleStatus">生产中</el-option>
-                        <el-option value="已结束" :label="queryInfo.scheduleStatus">已结束</el-option>
+                    <el-select style="width: 120px" v-model="queryInfo.scheduleStatus" placeholder="工单状态">
+
+                        <el-option value="10" :label="10">未开始</el-option>
+                        <el-option value="20" :label="20">生产中</el-option>
+                        <el-option value="30" :label="30">已结束</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -30,7 +29,7 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
             </el-table-column>
             <el-table-column label="计划编号" width="180">
                 <template slot-scope="scope">
-                    <span >{{ scope.row.planSeq }}</span>
+                    <span >{{ scope.row.planId }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="工单状态" width="180">
@@ -40,14 +39,14 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                             disable-transitions>{{showText(scope.row.scheduleStatus)}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="设备序号" width="180">
+            <el-table-column label="设备编号" width="180">
                 <template slot-scope="scope">
-                    <span >{{ scope.row.equipmentSeq }}</span>
+                    <span >{{ scope.row.equipmentId }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="产品名称" width="180">
                 <template slot-scope="scope">
-                    <span >{{ scope.row.productName }}</span>
+                    <span >{{ scope.row.tProductPlan.tProductOrder.tProduct.productName }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="创建时间" width="180">
@@ -58,7 +57,7 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
             </el-table-column>
             <el-table-column label="加工数量" width="180">
                 <template slot-scope="scope">
-                    <span >{{ scope.row.planCount }}</span>
+                    <span >{{ scope.row.scheduleCount }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="开始日期" width="180">
@@ -86,17 +85,6 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                     <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="修改人" width="130">
-                <template slot-scope="scope">
-                    <el-popover trigger="hover" placement="top">
-                        <p>姓名: {{ scope.row.updateUserName }}</p>
-                        <p>住址: {{ scope.row.productName }}</p>
-                        <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium">{{ scope.row.updateUserName }}</el-tag>
-                        </div>
-                    </el-popover>
-                </template>
-            </el-table-column>
             <el-table-column label="操作" fixed="right" width="180">
                 <template slot-scope="scope">
                     <el-button type="primary" v-if="scope.row.scheduleStatus!='30'" size="mini" @click="handleCreateReport( scope.row)">
@@ -108,19 +96,24 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+                background
+                layout="prev, pager, next"
+                :total="maxPage">
+        </el-pagination>
         <el-dialog title="外层 Dialog1" :visible.sync="outerVisible" >
             <el-button type="info">工单信息</el-button>
             <ul>
                 <li>
                     <div class="infoDiv"><el-tag >工单编号</el-tag><el-tag type="info">{{scheItem.scheduleSeq}}</el-tag></div>
-                    <div class="infoDiv"><el-tag >产品名称</el-tag><el-tag type="info">{{scheItem.productName}}</el-tag></div>
+                    <div class="infoDiv"><el-tag >产品名称</el-tag><el-tag type="info" >{{proName }}</el-tag></div>
                 </li>
                 <li>
-                    <div class="infoDiv"><el-tag >计划编号</el-tag><el-tag type="info">{{scheItem.planSeq}}</el-tag></div>
+                    <div class="infoDiv"><el-tag >设备编号</el-tag><el-tag type="info">{{scheItem.equipmentId}}</el-tag></div>
                     <div class="infoDiv"><el-tag >开始日期</el-tag><el-tag type="info">{{scheItem.startDate}}</el-tag></div>
                 </li>
                 <li>
-                    <div class="infoDiv"><el-tag >计划编号</el-tag><el-tag type="info">{{scheItem.planSeq}}</el-tag></div>
+                    <div class="infoDiv"><el-tag >计划编号</el-tag><el-tag type="info">{{scheItem.planId}}</el-tag></div>
                     <div class="infoDiv"><el-tag >结束日期</el-tag><el-tag type="info">{{scheItem.endDate}}</el-tag></div>
                 </li>
             </ul>
@@ -128,15 +121,13 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                 <el-button type="info">报工列表</el-button>
             </div>
             <el-table :data="report" style="width: 100%">
-                <el-table-column prop="reportSeq" label="报工序列" ></el-table-column>
-                <el-table-column prop="precessNum" label="加工数量"></el-table-column>
-                <el-table-column prop="passNum" label="合格数量"></el-table-column>
-                <el-table-column prop="startDate" label="开始日期"></el-table-column>
-                <el-table-column prop="endDate" label="结束日期"></el-table-column>
-                <el-table-column prop="note" label="备注"></el-table-column>
-
+                <el-table-column prop="id" label="报工编号" ></el-table-column>
+                <el-table-column prop="workingCount" label="加工数量"></el-table-column>
+                <el-table-column prop="qualifiedCount" label="合格数量"></el-table-column>
+                <el-table-column prop="startTime" label="开始日期"></el-table-column>
+                <el-table-column prop="endTime" label="结束日期"></el-table-column>
+                <el-table-column prop="bak" label="备注"></el-table-column>
             </el-table>
-
             <div slot="footer" class="dialog-footer">
                 <el-button @click="outerVisible = false">取 消</el-button>
             </div>
@@ -149,6 +140,8 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
         name: "ProductSchedule",
         data() {
             return {
+                maxPage:10,
+                proName:'',
                 report:[
                     {
                         reportSeq:'r0001',
@@ -181,11 +174,11 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                 productSchedule:[
                     {
                         scheduleSeq:'W2019086989',
-                        planSeq:'P2019086989',
+                        planId:'P2019086989',
                         scheduleStatus:10,
                         productName: '滤波电容器',
-                        planCount: '25986',
-                        equipmentSeq:'DX3602',
+                        scheduleCount: '25986',
+                        equipmentId:'DX3602',
                         startDate: '2019-07-30',
                         endDate:'2019-08-20',
                         flag: 1,
@@ -196,11 +189,11 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                     },
                     {
                         scheduleSeq:'W2019086989',
-                        planSeq:'P2019086989',
+                        planId:'P2019086989',
                         scheduleStatus:20,
                         productName: '滤波电容器',
-                        planCount: '25986',
-                        equipmentSeq:'DX3602',
+                        scheduleCount: '25986',
+                        equipmentId:'DX3602',
                         startDate: '2019-07-30',
                         endDate:'2019-08-20',
                         flag: 0,
@@ -211,11 +204,11 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                     },
                     {
                         scheduleSeq:'W2019086989',
-                        planSeq:'P2019086989',
+                        planId:'P2019086989',
                         scheduleStatus:30,
                         productName: '滤波电容器',
-                        planCount: '25986',
-                        equipmentSeq:'DX3602',
+                        scheduleCount: '25986',
+                        equipmentId:'DX3602',
                         startDate: '2019-07-30',
                         endDate:'2019-08-20',
                         flag: 1,
@@ -226,11 +219,11 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                     },
                     {
                         scheduleSeq:'W2019086989',
-                        planSeq:'P2019086989',
+                        planId:'P2019086989',
                         scheduleStatus:10,
                         productName: '滤波电容器',
-                        planCount: '25986',
-                        equipmentSeq:'DX3602',
+                        scheduleCount: '25986',
+                        equipmentId:'DX3602',
                         startDate: '2019-07-30',
                         endDate:'2019-08-20',
                         flag: 0,
@@ -242,14 +235,49 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                 ]
             };
         },
+        mounted: function(){
+            this.getData();
+        },
         methods: {
+            getData(){
+                console.log("reportList Getting data")
+                this.$ajax.post("/productSchedule/getAll",{factoryId:1}
+                ).then(response=>{
+                    this.productSchedule = response.data.data;
+                    console.log(response.data.data);
+                    console.log(this.productSchedule );
+                }).catch(function (error) {
+                    console.log("请设备列表求失败:"+error);
+                });
+            },
             showTraceDetial(item){
                 this.scheItem = item;
-                console.log(this.scheItem);
+                this.proName = item.tProductPlan.tProductOrder.tProduct.productName
+                console.log("查看"+this.scheItem.tProductPlan.tProductOrder.tProduct.productName);
+                console.log("this.scheItem.id"+this.scheItem.id)
                 this.outerVisible = true;
+                //获取某个调度的所有报工
+                this.$ajax.post("/dailyWork/list",{
+                        factoryId:1,
+                        orderTrackId: this.scheItem.id,
+                    }
+                ).then(response=>{
+                    this.report = response.data.data;
+                    console.log("查询报工");
+                    console.log(response.data.data);
+                    console.log(this.report);
+                }).catch(function (error) {
+                    console.log("请求失败:"+error);
+                });
             },
             handleCreateReport( item){
                 this.scheItem = item;
+                this.$router.push({
+                    name: 'reportList',
+                    params: {
+                        secheduleItem:item,
+                    }
+                })
                 console.log(this.scheItem);
                 this.outerVisible = true;
             },
@@ -271,8 +299,20 @@ TODO:完成报工：在当前工单生产完成时可完成最后一次报工，
                     return '已完成';
                 }
             },
-            onQurey() {
-                console.log('submit!'+this.queryInfo.scheduleStatus+this.queryInfo.equipmentSeq);
+            onQurey(){
+                console.log("traceList Querying data")
+                this.$ajax.post("/productSchedule/getAll",{
+                    factoryId:1,
+                    equipmentSeq:this.queryInfo.equipmentSeq,
+                    scheduleStatus:this.queryInfo.scheduleStatus
+                }
+                ).then(response=>{
+                    this.productSchedule = response.data.data;
+                    console.log(response.data.data);
+                    console.log(this.productSchedule );
+                }).catch(function (error) {
+                    console.log("请求失败:"+error);
+                });
             },
         }
     }
