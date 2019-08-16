@@ -9,10 +9,10 @@
                 <div class="mainBox">
                     <el-tabs closable type="card" v-model="activeIndex" @tab-click="tabClick" @tab-remove="tabRemove">
                         <el-tab-pane
-                                :key="index"
+                                :key="item.title"
                                 :label="item.title"
                                 :name="item.route"
-                                v-for="(item, index) in openTab"
+                                v-for="item in openTab"
                         >
                         </el-tab-pane>
                     </el-tabs>
@@ -22,8 +22,9 @@
                 <div>
                     <i style="display:block;height: 40px;float: left;font-size: 20px;line-height: 40px;cursor: pointer"
                        class="el-icon-d-arrow-right"></i>
-                    <el-dropdown style="display:block;height: 40px;float: left;font-size: 20px;line-height: 40px;cursor: pointer"
-                                 hide-on-click @command="handleTags">
+                    <el-dropdown
+                            style="display:block;height: 40px;float: left;font-size: 20px;line-height: 40px;cursor: pointer"
+                            hide-on-click @command="handleTags">
                         <i class="el-icon-arrow-down"></i>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command=all>关闭全部</el-dropdown-item>
@@ -38,8 +39,7 @@
 <script>
     export default {
         data() {
-            return {
-            }
+            return {}
         },
         computed: {
             openTab() {
@@ -96,39 +96,46 @@
             },
             // 关闭其他标签
             closeOthers() {
-                this.$store.commit('clear_tabs');
-                this.$store.commit('add_tabs', {route: this.$route.path, title: this.$route.title});
+                /*let openTab = this.openTab
+                for(let i=0;i<openTab.length;i++){
+                    if(openTab[i].route !== this.$route.path){
+                        this.$store.commit('delete_tabs', openTab[i].route);
+                    }
+                }
+                this.$store.commit('set_active_index', openTab[0].route);
+                this.$router.push({path: openTab[0].route});*/
+                console.log("进来了", this.openTab)
+                this.$store.commit('close_others_tabs',this.$route.path);
                 this.$store.commit('set_active_index', this.$route.path);
-                this.$router.push({path: this.activeIndex});
             },
             handleTags(command) {
                 command === 'others' ? this.closeOthers() : this.closeAll();
             }
         },
 
-       /* watch: {
-            '$route'(to) {
-                //判断路由是否已经打开
-                //已经打开的 ，将其置为active
-                //未打开的，将其放入队列里
-                let flag = false;
-                for (let item of this.openTab) {
-                    if (item.route === to.route) {
-                        //console.log('to.path', to.path);
-                        this.$store.commit('set_active_index', to.path)
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag) {
-                    console.log('to.path', to.path);
-                    if (to.path !== "/home/index") {
-                        this.$store.commit('add_tabs', {route: to.path, title: this.title});
-                        this.$store.commit('set_active_index', to.path);
-                    }
-                }
-            }
-        }*/
+        /* watch: {
+             '$route'(to) {
+                 //判断路由是否已经打开
+                 //已经打开的 ，将其置为active
+                 //未打开的，将其放入队列里
+                 let flag = false;
+                 for (let item of this.openTab) {
+                     if (item.route === to.route) {
+                         //console.log('to.path', to.path);
+                         this.$store.commit('set_active_index', to.path)
+                         flag = true;
+                         break;
+                     }
+                 }
+                 if (!flag) {
+                     console.log('to.path', to.path);
+                     if (to.path !== "/home/index") {
+                         this.$store.commit('add_tabs', {route: to.path, title: this.title});
+                         this.$store.commit('set_active_index', to.path);
+                     }
+                 }
+             }
+         }*/
     }
 </script>
 <style scoped>
@@ -153,7 +160,7 @@
         -webkit-box-sizing: border-box;
     }
 
-    .leftBut{
+    .leftBut {
         display: inline-block;
         width: 25px;
         text-align: center;
@@ -161,7 +168,8 @@
         font-size: 20px;
         cursor: pointer;
     }
-    .leftBut:hover{
+
+    .leftBut:hover {
         background-color: #f6f6f6;
     }
 

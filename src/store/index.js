@@ -36,6 +36,12 @@ const mutations = {
     clear_tabs(state){
         state.openedTabs = [];
     },
+    //关闭其他标签
+    close_others_tabs(state,route){
+        state.openedTabs = state.openedTabs.filter(item => {
+            return item.route === route;
+        });
+    },
     // 设置当前激活的tab
     set_active_index (state, index) {
         state.activeIndex = index;
