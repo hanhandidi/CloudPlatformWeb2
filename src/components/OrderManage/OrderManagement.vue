@@ -25,27 +25,29 @@
 
         <el-dialog title="新建订单" :visible.sync="dialogFormVisible">
             <el-form :model="order">
-                <el-form-item label="订单来源" :label-width="formLabelWidth">
-                    <el-input v-model="order.resource" autocomplete="off"></el-input>
-                </el-form-item>
                 <el-form-item label="产品名称" :label-width="formLabelWidth">
-                    <el-select v-model="order.name" placeholder="请选择要生产的产品">
-                        <el-option label="三极管" value="三极管"></el-option>
-                        <el-option label="电容器" value="电容器"></el-option>
-                        <el-option label="电压表" value="电压表"></el-option>
+                    <el-select style="width: 40%" v-model="order.productId" placeholder="请选择要生产的产品">
+                        <el-option v-for="(item,index) in products"
+                                   :label="item.productName" :value="item.id" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="生产数量" :label-width="formLabelWidth">
-                    <el-input v-model="order.count" autocomplete="off"></el-input>
+                <el-form-item  label="生产数量" :label-width="formLabelWidth">
+                    <el-input style="width: 40%" v-model="order.productCount" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="截至日期" :label-width="formLabelWidth">
-                    <el-date-picker v-model="order.endDate" type="date" placeholder="选择日期">
+                <el-form-item label="截止日期" :label-width="formLabelWidth">
+                    <el-date-picker style="width: 40%" v-model="order.endDate" type="datetime" placeholder="选择日期">
                     </el-date-picker>
+                </el-form-item>
+                <el-form-item label="有效标识" :label-width="formLabelWidth">
+                    <el-radio-group v-model="order.flag">
+                        <el-radio :label="0">有效</el-radio>
+                        <el-radio :label="1">失效</el-radio>
+                    </el-radio-group>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="orderCreate">确 定</el-button>
+                <el-button type="primary" @click="orderCreate">创 建</el-button>
             </div>
         </el-dialog>
 
@@ -57,13 +59,11 @@
                 </template>
             </el-table-column>
             <el-table-column align="center" label="订单来源" width="180">
-                <template slot-scope="scope">
-                    <span >{{ scope.row.orderSource }}</span>
-                </template>
+                    <span >线下订单</span>
             </el-table-column>
             <el-table-column align="center" label="产品名称" width="180">
                 <template slot-scope="scope">
-                    <span >{{ scope.row.productName }}</span>
+                    <span >{{ scope.row.tProduct.productName }}</span>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="产品数量" width="150">
@@ -71,11 +71,11 @@
                     <span >{{ scope.row.productCount }}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="已完成数量" width="150">
+            <!--<el-table-column align="center" label="已完成数量" width="150">
                 <template slot-scope="scope">
                     <span >{{ scope.row.finishedCount }}</span>
                 </template>
-            </el-table-column>
+            </el-table-column>-->
             <el-table-column align="center" label="订单截止日期" width="180">
                 <template slot-scope="scope">
                     <i class="el-icon-time"></i>
@@ -89,18 +89,13 @@
                             disable-transitions>{{showText(scope.row.orderStatus)}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="工厂产能" width="180">
-                <template slot-scope="scope">
-                    <span >{{ scope.row.factoryYield }}</span>
-                </template>
-            </el-table-column>
             <el-table-column align="center" label="创建时间" width="180">
                 <template slot-scope="scope">
                     <i class="el-icon-time"></i>
                     <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="创建人" width="130">
+         <!--   <el-table-column align="center" label="创建人" width="130">
                 <template slot-scope="scope">
                     <el-popover trigger="hover" placement="top">
                         <p>姓名: {{ scope.row.createUserName }}</p>
@@ -110,14 +105,14 @@
                         </div>
                     </el-popover>
                 </template>
-            </el-table-column>
+            </el-table-column>-->
             <el-table-column align="center" label="上次修改时间" width="180">
                 <template slot-scope="scope">
                     <i class="el-icon-time"></i>
                     <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="修改人" width="130">
+         <!--   <el-table-column align="center" label="修改人" width="130">
                 <template slot-scope="scope">
                     <el-popover trigger="hover" placement="top">
                         <p>姓名: {{ scope.row.updateUserName }}</p>
@@ -127,7 +122,7 @@
                         </div>
                     </el-popover>
                 </template>
-            </el-table-column>
+            </el-table-column>-->
             <el-table-column align="center" label="有效标识" width="135">
                 <template slot-scope="scope">
                     <el-tag effect="dark"
@@ -157,6 +152,14 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+                background
+                layout="prev, pager, next"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="4"
+                :total="totalSize">
+        </el-pagination>
     </div>
 </template>
 
@@ -165,90 +168,29 @@
         name: "OrderManagement",
         data() {
             return {
-                productOrder: [{
-                    orderSeq: 'O20190803164530',
-                    orderSource: '线下订单',
-                    productName: '罐装豆豉鱼',
-                    productCount: 589,
-                    finishedCount:234,
-                    endDate:'2016-05-02',
-                    orderStatus: 10,
-                    factoryYield:'280罐/天',
-                    flag: 1,
-                    createTime: '2019-08-02',
-                    createUserName:'周全',
-                    updateTime: '2016-05-02',
-                    updateUserName:'连文凯',
-                }, {
-                    orderSeq: 'O20190803164530',
-                    orderSource: '线上订单',
-                    productName: '瓶装可口可乐',
-                    productCount: 5589,
-                    finishedCount:234,
-                    endDate:'2016-05-02',
-                    orderStatus: 20,
-                    factoryYield:'536瓶/天',
-                    flag: 1,
-                    createTime: '2016-05-02',
-                    createUserName:'马云',
-                    updateTime: '2016-05-02',
-                    updateUserName:'习近平',
-                }, {
-                    orderSeq: 'O20190803164530',
-                    orderSource: '线下订单',
-                    productName: 'BV_6A型号锂电池',
-                    productCount: 9589,
-                    finishedCount:234,
-                    endDate:'2016-05-02',
-                    orderStatus: 30,
-                    factoryYield:'459块/天',
-                    flag: 0,
-                    createTime: '2016-05-02',
-                    createUserName:'雷军',
-                    updateTime: '2016-05-02',
-                    updateUserName:'连文凯',
-                }, {
-                    orderSeq: 'O20190803164530',
-                    orderSource: '线下订单',
-                    productName: '罐装豆豉鱼',
-                    productCount: 589,
-                    finishedCount:234,
-                    endDate:'2016-05-02',
-                    orderStatus: 40,
-                    factoryYield:'280罐/天',
-                    flag: 1,
-                    createTime: '2016-05-02',
-                    createUserName:'周全',
-                    updateTime: '2016-05-02',
-                    updateUserName:'连文凯',
-                },{
-                    orderSeq: 'O20190803164530',
-                    orderSource: '线下订单',
-                    productName: '罐装豆豉鱼',
-                    productCount: 589,
-                    finishedCount:234,
-                    endDate:'2016-05-02',
-                    orderStatus: 50,
-                    factoryYield:'280罐/天',
-                    flag: 0,
-                    createTime: '2016-05-02',
-                    createUserName:'周全',
-                    updateTime: '2016-05-02',
-                    updateUserName:'连文凯',
-                }],
+                productOrder: [],
                 formInline: {
                     user: '',
                     region: ''
                 },
                 dialogFormVisible: false,
                 order: {
-                    resource: '',
-                    name: '',
-                    count: '',
-                    endDate: '',
+                    productId:"",
+                    productCount:"",
+                    endDate:"",
+                    flag:0,
+                    createUserid:2,
+                    factoryId:1
                 },
+                products:[],
                 formLabelWidth: '120px',
+                currentPage:1,
+                totalSize:0
             }
+        },
+        created(){
+            this.getProductList();
+            this.getOrderList(1);
         },
         methods: {
             handleDetail(index, row) {//查看订单详情
@@ -271,9 +213,31 @@
             onSubmit() {
                 console.log('submit!');
             },
-            orderCreate(){
+            orderCreate(){ //新建订单
+                this.order.endDate= this.changeDate(this.order.endDate);
                 this.dialogFormVisible = false;
-                console.log(this.order);
+                this.$ajax.post("/productOrder/add",this.order).then(response=>{
+                    let code = response.data.code;
+                    let message=response.data.message;
+                    if(code===200){
+                        this.$message({
+                            message: message,
+                            type: 'success'
+                        });
+                        this.order.productId="";
+                        this.order.productCount="";
+                        this.order.endDate="";
+                        this.order.flag=0;
+                    }else {
+                        this.$message.error(message);
+                    }
+                }).catch(function (error) {
+                    this.$message.error('添加失败');
+                    console.log("添加失败："+error);
+                });
+            },
+            handleCurrentChange(val) {  //当前页改变时请求数据
+                this.getOrderList(val);
             },
             showStatus(type){
                 let result="success";
@@ -320,6 +284,37 @@
                         break;
                 }
                 return result;
+            },
+           changeDate(time){
+                let year=time.getFullYear();
+                let month=time.getMonth()+1;
+                let day=time.getDate();
+                let hour=time.getHours();
+                let min=time.getMinutes();
+                let second=time.getSeconds();
+                let back=`${year}-${month}-${day} ${hour}:${min}:${second}`;
+                return back;
+            },
+            getProductList(){//获取产品列表
+                this.$ajax.post("/product/list",{
+                    factoryId:1
+                }).then(response=>{
+                    console.log(response.data.data);
+                    this.products = response.data.data;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            getOrderList(val){ //获取订单列表
+                this.$ajax.post("/productOrder/listPage/"+val,{
+                    factoryId:1
+                }).then(response=>{
+                    console.log(response.data.data);
+                    this.productOrder = response.data.data.list;
+                    this.totalSize=response.data.data.total;
+                }).catch(function (error) {
+                    console.log(error);
+                });
             }
         }
     }

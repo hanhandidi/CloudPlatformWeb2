@@ -116,7 +116,6 @@
                 return (isJPG || isPNG) && isLt2M;
             },
             getData() {
-                console.log("进来")
                 let device = this.$route.params.device;
                 this.equipment = device;
                 this.equipment.equipmentStatus = this.equipment.equipmentStatus.toString();

@@ -1,14 +1,14 @@
 <template>
     <div>
         <div class="position">
-            <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                <el-form-item label="关键字">
-                    <el-input v-model="formInline.user" ></el-input>
+            <el-form :inline="true" :model="searchWord" class="demo-form-inline">
+                <el-form-item>
+                    <el-input v-model="searchWord.keyWord" ></el-input>
                 </el-form-item>
-                <el-form-item label="有效标志">
-                    <el-select style="width: 120px" v-model="formInline.region" placeholder="选择标志">
-                        <el-option label="有效" value="shanghai"></el-option>
-                        <el-option label="失效" value="beijing"></el-option>
+                <el-form-item label="搜索类型">
+                    <el-select v-model="searchWord.type" placeholder="选择标志">
+                        <el-option label="设备名称" value="device"></el-option>
+                        <el-option label="产品名称" value="product"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -17,7 +17,7 @@
             </el-form>
         </div>
 
-        <el-table stripe border :data="equipments" style="width: 100%">
+        <el-table stripe border :data="equipments">
             <el-table-column align="center" label="设备序号" width="180">
                 <template slot-scope="scope">
                     <span>{{ scope.row.equipmentSeq }}</span>
@@ -98,6 +98,14 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+                background
+                layout="prev, pager, next"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="4"
+                :total="totalSize">
+        </el-pagination>
     </div>
 </template>
 
@@ -107,26 +115,26 @@
         data() {
             return {
                 equipments: [{}],
-                formInline: {
-                    user: '',
-                    region: ''
-                }
+                searchWord: {
+                    keyWord: '',
+                    type: '',
+                },
+                currentPage:1,
+                totalSize:0
             }
         },
         created(){
-            console.log("一次")
-            this.$ajax.post("/equipment/getAll",{
+            this.$ajax.post("/equipment/list/1",{
                 factoryId:1
             }).then(response=>{
-                this.equipments = response.data.data;
-                console.log(this.MYGLOBAL.url+"this.MYGLOBAL.url---"+this.equipments);
+                this.equipments = response.data.data.list;
+                this.totalSize=response.data.data.total;
             }).catch(function (error) {
                 console.log("请设备列表求失败:"+error);
             });
         },
         methods: {
             handleEdit(index, row) {  //编辑设备
-                console.log(index, row);
                 this.$router.push({
                     name:"updateDevice",
                     params:{
@@ -135,12 +143,15 @@
                 });
             },
             contact(pic){  //拼接图片路径
-                let url=this.MYGLOBAL.url+"/"+pic;
-                return url;
+                if(pic!==undefined){
+                    let url=this.MYGLOBAL.url+"/"+pic;
+                    return url;
+                }else {
+                    return false;
+                }
             },
-            handleDelete(index, row) {
+            handleDelete(index, row) { //删除设备
                 this.$ajax.delete("/equipment/delete/"+row.id).then(response=>{
-                    console.log(response.data);
                     let code = response.data.code;
                     let message=response.data.message;
                     if(code===200){
@@ -155,10 +166,56 @@
                 }).catch(function (error) {
                     console.log("请设备列表求失败:"+error);
                 });
-
             },
-            onSubmit() {
-                console.log('submit!');
+            onSubmit() {  // 模糊查询
+                let type=this.searchWord.type;
+                let keyWord=this.searchWord.keyWord;
+                if(keyWord===""){
+                    this.$ajax.post("/equipment/list/1",{
+                        factoryId:1
+                    }).then(response=>{
+                        this.equipments = response.data.data.list;
+                        this.totalSize=response.data.data.total;
+                    }).catch(function (error) {
+                        console.log("请设备列表求失败:"+error);
+                    });
+                }
+                else if(type==="device"){
+                    this.$ajax.post("/equipment/select/1",{
+                        equipmentName:keyWord,
+                        factoryId:1,
+                        productName:""
+                    }).then(response=>{
+                        console.log(response.data.data);
+                        this.equipments = response.data.data.list;
+                        this.totalSize=response.data.data.total;
+                    }).catch(function (error) {
+                        console.log("请设备列表求失败:"+error);
+                    });
+                }else if(type==="product"){
+                    this.$ajax.post("/equipment/select/1",{
+                        productName:keyWord,
+                        factoryId:1,
+                        equipmentName:""
+                    }).then(response=>{
+                        this.equipments = response.data.data.list;
+                        this.totalSize=response.data.data.total;
+                    }).catch(function (error) {
+                        console.log("请设备列表求失败:"+error);
+                    });
+                }else {
+                    this.$ajax.post("/equipment/select/1",{
+                        productName:keyWord,
+                        factoryId:1,
+                        equipmentName:keyWord
+                    }).then(response=>{
+                        this.equipments = response.data.data.list;
+                        this.totalSize=response.data.data.total;
+                    }).catch(function (error) {
+                        console.log("请设备列表求失败:"+error);
+                    });
+                }
+
             },
             showType(type){  //设置设备不同状态不同的风格
                 if(type===10){
@@ -178,11 +235,61 @@
                     return '故障';
                 }
             },
+            handleCurrentChange(val) {  //当前页改变时请求数据
+                let type=this.searchWord.type;
+                let keyWord=this.searchWord.keyWord;
+                if(keyWord===""){
+                    this.$ajax.post("/equipment/select/"+val,{
+                        factoryId:1
+                    }).then(response=>{
+                        this.equipments = response.data.data.list;
+                        this.totalSize=response.data.data.total;
+                    }).catch(function (error) {
+                        console.log("请设备列表求失败:"+error);
+                    });
+                }else {
+                    if(type==="device"){
+                        this.$ajax.post("/equipment/select/"+val,{
+                            equipmentName:keyWord,
+                            factoryId:1,
+                            productName:""
+                        }).then(response=>{
+                            this.equipments = response.data.data.list;
+                            this.totalSize=response.data.data.total;
+                        }).catch(function (error) {
+                            console.log("请设备列表求失败:"+error);
+                        });
+                    }else if(type==="product"){
+                        this.$ajax.post("/equipment/select/"+val,{
+                            productName:keyWord,
+                            factoryId:1,
+                            equipmentName:""
+                        }).then(response=>{
+                            this.equipments = response.data.data.list;
+                            this.totalSize=response.data.data.total;
+                        }).catch(function (error) {
+                            console.log("请设备列表求失败:"+error);
+                        });
+                    }else {
+                        this.$ajax.post("/equipment/select/"+val,{
+                            productName:keyWord,
+                            factoryId:1,
+                            equipmentName:keyWord
+                        }).then(response=>{
+                            this.equipments = response.data.data.list;
+                            this.totalSize=response.data.data.total;
+                        }).catch(function (error) {
+                            console.log("请设备列表求失败:"+error);
+                        });
+                    }
+                }
+            }
 
         },
         filters:{
-            DateFormat: function (timeStamp) {
-                let temp=timeStamp.substr(0,10);
+            DateFormat: function (timeStamp) { //转化当前时间格式
+                let ctemp=timeStamp+"";
+                let temp=ctemp.substr(0,10);
                 return temp;
             }
         }
@@ -194,12 +301,15 @@
 <style scoped>
     .position{
         margin-top: 30px;
-        margin-left: 18%;
+        text-align: center;
         margin-bottom: 20px;
 
     }
     .image{
         height: 80px;
         width: 80px;
+    }
+    .el-table{
+        width:100%;
     }
 </style>
