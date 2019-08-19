@@ -39,7 +39,7 @@
         components: {PermitView},
         data() {
             return {
-                roleListAPI: 'http://localhost/role/list',
+                roleListAPI: global.IP_PORT_2 + '/role/list',
                 roleList: [],
                 roleId: '' //String
             }

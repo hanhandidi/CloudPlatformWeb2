@@ -25,6 +25,8 @@
 
 <script>
 
+    import global from "../../router/global";
+
     export default {
         name: 'Auth',
         data() {
@@ -37,10 +39,10 @@
                 userId: '', // 扫码登录的用户ID
                 userAvatar: '', // 扫码登录的用户头像
                 userName: '', // 扫码登录的用户名
-                tokenApi: 'http://localhost/auth/token', // 获取口令
-                tokenImgApi: 'http://localhost/auth/img/', // 获取口令对应的登录码
-                tokenInfoApi: 'http://localhost/auth/info/', // 获取口令信息
-                userInfoApi: 'http://localhost/login/getUser' // 获取用户信息
+                tokenApi: global.IP_PORT_1 + '/auth/token', // 获取口令
+                tokenImgApi: global.IP_PORT_1 + '/auth/img/', // 获取口令对应的登录码
+                tokenInfoApi: global.IP_PORT_1 + '/auth/info/', // 获取口令信息
+                userInfoApi: global.IP_PORT_1 + '/login/getUser' // 获取用户信息
             }
         },
         created() {
@@ -149,7 +151,7 @@
     .login_close {
         position: absolute;
         top: 0;
-        left: 0;
+        right: 0;
         width: 64px;
         height: 64px;
         background: url(../../assets/img/pcinput.png) no-repeat right top;

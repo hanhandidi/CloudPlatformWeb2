@@ -63,7 +63,7 @@
                                             width="200">
                                         <template slot-scope="scope">
                                             <i class="el-icon-time"></i>
-                                            <span style="margin-left: 10px">{{ scope.row.createTime}}</span>
+                                            <span style="margin-left: 10px">{{ scope.row.createTime.split('T')[0]}}</span>
                                         </template>
                                     </el-table-column>
                                     <!--                                    <el-table-column-->
@@ -79,7 +79,7 @@
                                             width="200">
                                         <template slot-scope="scope">
                                             <i class="el-icon-time"></i>
-                                            <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
+                                            <span style="margin-left: 10px">{{ scope.row.updateTime.split('T')[0] }}</span>
                                         </template>
                                     </el-table-column>
                                     <el-table-column label="操作">
@@ -156,8 +156,8 @@
         components: {RoleEdit},
         data() {
             return {
-                roleAPI: 'http://localhost/role',
-                roleListAPI: 'http://localhost/role/list',
+                roleAPI: global.IP_PORT_2 + '/role',
+                roleListAPI: global.IP_PORT_2 + '/role/list',
                 roleList: [],
                 reverse: false,
                 drawer: false,

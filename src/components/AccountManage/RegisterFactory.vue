@@ -64,7 +64,8 @@
         name: "RegisterFactory",
         data() {
             return {
-                factoryCreateApi: 'http://localhost/factory/create',
+                factoryCreateApi: global.IP_PORT_1 + '/factory/create',
+                roleAPI: global.IP_PORT_2 + '/role',
                 factory: {
                     bak: '',
                     factoryName: '',
@@ -72,6 +73,14 @@
                     factoryAddr: '',
                     factoryUrl: '',
                     factoryWorker: ''
+                },
+                role: {
+                    createUserid: 0,
+                    updateUserid: 0,
+                    factoryId: 0,
+                    roleDesc: '',
+                    roleName: '',
+                    roleStatus: 0
                 }
             };
         },
@@ -90,7 +99,10 @@
                     this.$message.error('请按照要求输入工厂人数');
                     return null;
                 }
-                // 开始网络交互
+                // 开始注册工厂
+                this.registerFactory();
+            },
+            registerFactory() {
                 this.$ajax({
                     method: 'post',
                     url: this.factoryCreateApi,
@@ -99,19 +111,43 @@
                     if (response.data.code === 201) {
                         this.$message.error('工厂名称已存在');
                     } else {
+                        console.log(response.data.data);
                         global.userId = response.data.data.userId;
                         global.factoryId = response.data.data.factoryId;
-                        console.log(response.data.data);
-                        this.$router.push({
-                            path: `/register/2`
-                        })
+                        this.role.createUserid = global.userId;
+                        this.role.updateUserid = global.userId;
+                        this.role.factoryId = global.factoryId;
+                        this.role.roleDesc = '系统预置管理员';
+                        this.role.roleName = global.factoryId + '#管理员';
+                        this.role.roleStatus = 0;
+                        // 开始注册管理员角色
+                        this.registerRole();
                     }
                 }).catch((error) => {
                     console.log(error)
                 });
             },
-
-
+            registerRole() {
+                this.$ajax({
+                    method: 'post',
+                    url: this.roleAPI,
+                    data: this.qs.stringify(this.role)
+                }).then((response) => {
+                    console.log(response.data.data);
+                    if (response.data.code === 201) {
+                        this.$message.error('出了点问题，请刷新重试！,');
+                    } else {
+                        global.roleId = response.data.data.id;
+                        //角色也注册成功，跳转下一步
+                        this.$router.push({
+                            path: `/register/2`
+                        })
+                    }
+                }).catch((error) => {
+                    this.$message.error('网络出错！');
+                    console.log(error)
+                })
+            },
 
             handleAvatarSuccess(res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);

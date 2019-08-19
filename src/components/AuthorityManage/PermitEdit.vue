@@ -112,19 +112,19 @@
         data() {
             return {
                 showPermitList: false,
-                roleAPI: 'http://localhost/role',
+                roleAPI: global.IP_PORT_2 + '/role',
                 role: {},
-                permitMenuListAPI: 'http://localhost/permit/menu/list',
+                permitMenuListAPI: global.IP_PORT_2 + '/permit/menu/list',
                 permitMenuList: [],
-                rolePermitListAPI: 'http://localhost/role/permit/list',
+                rolePermitListAPI: global.IP_PORT_2 + '/role/permit/list',
                 rolePermitList: [],
-                rolePermitIdListAPI: 'http://localhost/role/permit/id/list',
+                rolePermitIdListAPI: global.IP_PORT_2 + '/role/permit/id/list',
                 rolePermitIdList: [],
                 defaultProps: {
                     children: 'permitSubs',
                     label: 'permitName'
                 },
-                rolePermitsAPI: 'http://localhost/role/permits'
+                rolePermitsAPI: global.IP_PORT_2 + '/role/permits'
             };
         },
         mounted() {

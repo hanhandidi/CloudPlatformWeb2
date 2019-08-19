@@ -72,7 +72,7 @@
         name: "RegisterAdmin",
         data() {
             return {
-                userUpdateApi: 'http://localhost/user',
+                userUpdateApi: global.IP_PORT_1 + '/user',
                 user: {
                     id: global.userId,
                     createUserid: global.userId,
@@ -84,7 +84,7 @@
                     userPhoneNum: '',
                     userEmail: '',
                     userStatus: 0,
-                    roleId: 0,
+                    roleId: global.roleId,
                     factoryId: global.factoryId
                 }
             }
@@ -119,11 +119,12 @@
                     this.$message.error('请输入有效的手机');
                     return null;
                 }
-                if (!/^\d{10}$/.test(this.user.userJobNum)) {
+                if (!/^\d{6}$/.test(this.user.userJobNum)) {
                     this.$message.error('请按照要求输入用户工号');
                     return null;
                 }
                 // 开始网络交互
+                alert("****" + global.factoryId);
                 this.$ajax({
                     method: 'put',
                     url: this.userUpdateApi,

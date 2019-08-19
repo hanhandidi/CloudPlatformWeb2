@@ -25,12 +25,14 @@
 
 <script>
 
+    import global from "../../router/global";
+
     export default {
         name: 'RoleEdit',
         props: ['isAdd', 'role'],
         data() {
             return {
-                roleAPI: 'http://localhost/role',
+                roleAPI: global.IP_PORT_2 + '/role',
                 rules: {
                     roleName: [
                         {required: true, message: '请输入角色名称', trigger: 'blur'},
@@ -45,6 +47,8 @@
         },
         methods: {
             submitForm(formName) {
+                delete this.role.createTime;
+                delete this.role.updateTime;
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         if (this.isAdd) {

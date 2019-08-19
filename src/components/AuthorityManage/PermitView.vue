@@ -1,8 +1,8 @@
 <template>
     <div>
-<!--        <div class="box_title">-->
-<!--            <span>权限列表</span>-->
-<!--        </div>-->
+        <!--        <div class="box_title">-->
+        <!--            <span>权限列表</span>-->
+        <!--        </div>-->
         <div>
             <template>
                 <!-- id 权限名 权限图标 权限状态 权限路径 父id-->
@@ -44,13 +44,13 @@
                             </el-tag>
                         </template>
                     </el-table-column>
-<!--                    <el-table-column-->
-<!--                            label="权限路径"-->
-<!--                            width="180">-->
-<!--                        <template slot-scope="scope">-->
-<!--                            <span style="margin-left: 10px">{{ scope.row.permitPath}}</span>-->
-<!--                        </template>-->
-<!--                    </el-table-column>-->
+                    <!--                    <el-table-column-->
+                    <!--                            label="权限路径"-->
+                    <!--                            width="180">-->
+                    <!--                        <template slot-scope="scope">-->
+                    <!--                            <span style="margin-left: 10px">{{ scope.row.permitPath}}</span>-->
+                    <!--                        </template>-->
+                    <!--                    </el-table-column>-->
                     <el-table-column
                             label="父权限"
                             width="100">
@@ -67,12 +67,15 @@
 </template>
 
 <script>
+    import global from "../../router/global"
+
     export default {
         name: "PermitView",
         data() {
             return {
-                permitAPI: "http://localhost/permit/list",
+                permitAPI: global.IP_PORT_2 + '/permit/list',
                 permitList: []
+
             }
         },
         methods: {

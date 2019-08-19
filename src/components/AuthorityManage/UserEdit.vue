@@ -31,7 +31,9 @@
                 <span style="font-size: 13px;margin-left: 10px;color: #606266">选中为正常</span>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" size="medium" @click="submitForm('userForm')" style="width: 150px;margin-top: 20px">提交</el-button>
+                <el-button type="primary" size="medium" @click="submitForm('userForm')"
+                           style="width: 150px;margin-top: 20px">提交
+                </el-button>
             </el-form-item>
         </el-form>
 
@@ -41,12 +43,14 @@
 <script>
 
 
+    import global from "../../router/global";
+
     export default {
         name: 'userEdit',
         props: ['isAdd', 'user', 'roleList'],
         data() {
             return {
-                userAPI: 'http://localhost/user',
+                userAPI: global.IP_PORT_2 + '/user',
                 rules: {
                     userName: [
                         {required: true, message: '请输入用户登录名', trigger: 'blur'},
@@ -86,6 +90,8 @@
         // },
         methods: {
             submitForm(formName) {
+                delete this.user.createTime;
+                delete this.user.updateTime;
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         if (this.isAdd) {

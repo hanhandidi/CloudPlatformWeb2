@@ -78,25 +78,25 @@
                                     width="120">
                                 <template slot-scope="scope">
                                     <i class="el-icon-date"></i>
-                                    <span style="margin-left: 5px">{{ scope.row.createTime.split(' ')[0]  }}</span>
+                                    <span style="margin-left: 5px">{{ scope.row.createTime.split('T')[0]  }}</span>
                                 </template>
                             </el-table-column>
-<!--                            <el-table-column-->
-<!--                                    label="修改人"-->
-<!--                                    width="100">-->
-<!--                                <template slot-scope="scope">-->
-<!--                                    <i class="el-icon-user"></i>-->
-<!--                                    <span>{{ scope.row.updateUserid }}</span>-->
-<!--                                </template>-->
-<!--                            </el-table-column>-->
-<!--                            <el-table-column-->
-<!--                                    label="修改时间"-->
-<!--                                    width="120">-->
-<!--                                <template slot-scope="scope">-->
-<!--                                    <i class="el-icon-date"></i>-->
-<!--                                    <span style="margin-left: 5px">{{ scope.row.updateTime.split(' ')[0] }}</span>-->
-<!--                                </template>-->
-<!--                            </el-table-column>-->
+                            <!--                            <el-table-column-->
+                            <!--                                    label="修改人"-->
+                            <!--                                    width="100">-->
+                            <!--                                <template slot-scope="scope">-->
+                            <!--                                    <i class="el-icon-user"></i>-->
+                            <!--                                    <span>{{ scope.row.updateUserid }}</span>-->
+                            <!--                                </template>-->
+                            <!--                            </el-table-column>-->
+                            <!--                            <el-table-column-->
+                            <!--                                    label="修改时间"-->
+                            <!--                                    width="120">-->
+                            <!--                                <template slot-scope="scope">-->
+                            <!--                                    <i class="el-icon-date"></i>-->
+                            <!--                                    <span style="margin-left: 5px">{{ scope.row.updateTime.split(' ')[0] }}</span>-->
+                            <!--                                </template>-->
+                            <!--                            </el-table-column>-->
                             <el-table-column
                                     label="用户角色"
                                     width="100">
@@ -142,7 +142,8 @@
                     :title="drawerTitle"
                     :visible.sync="drawer"
                     direction="rtl">
-                <UserEdit :is-add="drawerIsAdd" :user="user" :role-list="roleList" @createResult="handleUserResult"></UserEdit>
+                <UserEdit :is-add="drawerIsAdd" :user="user" :role-list="roleList"
+                          @createResult="handleUserResult"></UserEdit>
             </el-drawer>
         </div>
     </div>
@@ -157,10 +158,10 @@
         components: {UserEdit},
         data() {
             return {
-                userAPI: 'http://localhost/user',
-                userListAPI: 'http://localhost/user/list',
+                userAPI: global.IP_PORT_2 + '/user',
+                userListAPI: global.IP_PORT_2 + '/user/list',
                 userList: [],
-                roleListAPI: 'http://localhost/role/list',
+                roleListAPI: global.IP_PORT_2 + '/role/list',
                 roleList: [],
                 drawer: false,
                 drawerTitle: '',
@@ -222,6 +223,7 @@
                 this.drawer = data;
             },
             getUserList() {
+                // alert("========"+global.factoryId);
                 this.$ajax({
                     method: 'get',
                     url: this.userListAPI,

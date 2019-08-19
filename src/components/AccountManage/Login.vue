@@ -22,13 +22,15 @@
 </template>
 
 <script>
+    import global from "../../router/global";
+
     export default {
         name: 'Input',
         data() {
             return {
                 userId: '',
                 userPassword: '',
-                userLoginApi: 'http://localhost/user/login' // 通过用户ID登录接口
+                userLoginApi: global.IP_PORT_1 + '/user/login' // 通过用户ID登录接口
             }
         },
         methods: {
@@ -45,10 +47,14 @@
                     console.log(response.data);
                     // 获取用户信息，登录成功
                     if (response.data.code === 200) {
+                        global.userId = response.data.data.id;
+                        global.userName = response.data.data.userName;
+                        global.factoryId = response.data.data.factoryId;
+                        global.roleId = response.data.data.roleId;
                         this.$message.success('登录成功!');
-                        // this.$router.push({
-                        //     path: `/register/3`
-                        // })
+                        this.$router.push({
+                            path: `/home/userManage`
+                        })
                     } else {
                         this.$message.error('登录失败，请检查账号或密码!');
                     }
